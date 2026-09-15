@@ -18,7 +18,7 @@
 <h1 align="center">PetVita</h1>
 <h3 align="center">Interaktywna książeczka zdrowia zwierząt</h3>
 <h3 align="center">zapewnia szybki przegląd Twoich zwierząt</h3>
-<h3 align="center">i najpilniejszych nadchodzących usług.</h3>  
+<h3 align="center">i najpilniejszych zaplanowanych czynności.</h3>  
 
 ![](./.design/assets/feature_graphic/output/en/gh-header_image.jpg)
 
