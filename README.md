@@ -26,7 +26,7 @@
   <a href="./.design/i18n/README_zh.md">中文</a>
 </p>
 
-## What PetVita do?
+## Co robi PetVita?
 
 ✅ Interaktywna książeczka zdrowia zwierząt zapewnia szybki przegląd Twoich zwierząt i najpilniejszych nadchodzących usług.
 
