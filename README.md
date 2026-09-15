@@ -16,7 +16,8 @@
 </p>
 
 <h1 align="center">PetVita</h1>
-<h3 align="center">Interaktywna książeczka zdrowia zwierząt zapewnia szybki przegląd Twoich zwierząt i najpilniejszych nadchodzących usług.</h3>
+<h3 align="center">Interaktywna książeczka zdrowia zwierząt zapewnia szybki przegląd Twoich zwierząt</h3>
+  <h3 align="center">i najpilniejszych nadchodzących usług.</h3>
 
 ![](./.design/assets/feature_graphic/output/en/gh-header_image.jpg)
 
@@ -28,8 +29,7 @@
 
 ## Co robi PetVita?
 
-✅ Interaktywna książeczka zdrowia zwierząt zapewnia szybki przegląd Twoich zwierząt 
-i najpilniejszych nadchodzących czynności.
+✅ Interaktywna książeczka zdrowia zwierząt zapewnia szybki przegląd Twoich zwierząt i najpilniejszych nadchodzących czynności.
 
 ✅ Śledź wiele zwierząt: Zarządzaj wszystkimi zwierzętami w jednym miejscu.
 
