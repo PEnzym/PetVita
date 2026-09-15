@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/icon/icon.png" width="120" title="PetVita">
+  <img src="./assets/icon/ico.png" width="120" title="PetVita">
 </p>
 
 <h1 align="center">PetVita</h1>
