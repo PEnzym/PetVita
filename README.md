@@ -28,7 +28,8 @@
 
 ## Co robi PetVita?
 
-✅ Interaktywna książeczka zdrowia zwierząt zapewnia szybki przegląd Twoich zwierząt i najpilniejszych nadchodzących usług.
+✅ Interaktywna książeczka zdrowia zwierząt zapewnia szybki przegląd Twoich zwierząt 
+i najpilniejszych nadchodzących czynności.
 
 ✅ Śledź wiele zwierząt: Zarządzaj wszystkimi zwierzętami w jednym miejscu.
 
