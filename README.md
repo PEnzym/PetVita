@@ -28,17 +28,17 @@
 
 ## What PetVita do?
 
-✅ **Visualize Your Vehicle's Status:** A clear dashboard provides an at-a-glance overview of your vehicles and the most urgent upcoming services.
+✅ Interaktywna książeczka zdrowia zwierząt zapewnia szybki przegląd Twoich zwierząt i najpilniejszych nadchodzących usług.
 
-✅ **Track Multiple Vehicles:** Manage all your cars, motorcycles, or other vehicles in one place.
+✅ Śledź wiele zwierząt: Zarządzaj wszystkimi zwierzętami w jednym miejscu.
 
-✅ **Create Custom Maintenance Plans:** Input your vehicle manufacturer's recommended service schedule (both time and mileage intervals, including first service requirements) to create a plan tailored specifically to your vehicle.
+✅ Twórz niestandardowe plany profilaktyki: Wprowadź zalecany przez lekarza weterynarii harmonogram profilaktyki, aby utworzyć plan dostosowany specjalnie do Twojego zwierzęcia.
 
-✅ **Log Every Service:** Keep a detailed digital history of all maintenance performed, including date, mileage, items serviced, costs, and notes.
+✅ Rejestruj każdą usługę: Prowadź szczegółową historię cyfrową wszystkich wykonanych działań profilaktycznych, obejmując datę, wykonywane zabiegi, koszty i notatki.
 
-✅ **Get Predictions:** Calculates upcoming maintenance tasks for each item in your plan, considering both time and mileage cycles, and even predicts due dates based on your vehicle's usage patterns.
+✅ Uzyskaj prognozy: Oblicza nadchodzące czynności profilaktyczne dla każdego zwierzęcia, biorąc pod uwagę cykle czasowe.
 
-✅ **Stay Alert with Reminders:** Receive timely local notifications for upcoming services, so you can schedule appointments without stress.
+✅ Zachowaj czujność dzięki przypomnieniom: Otrzymuj terminowe lokalne powiadomienia o nadchodzących działaniach, dzięki czemu możesz umawiać się na spotkania bez stresu.
 
 ## Get Started
 
