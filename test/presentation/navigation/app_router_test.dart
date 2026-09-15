@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:carvita/application/use_cases/maintenance_plan_use_cases.dart';
-import 'package:carvita/application/use_cases/service_log_use_cases.dart';
+import 'package:petvita/application/use_cases/maintenance_plan_use_cases.dart';
+import 'package:petvita/application/use_cases/service_log_use_cases.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'package:carvita/core/constants/app_routes.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/data/repositories/maintenance_repository.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/manager/maintenance_plan/maintenance_plan_cubit.dart';
-import 'package:carvita/presentation/manager/service_log/service_log_cubit.dart';
-import 'package:carvita/presentation/navigation/app_route_arguments.dart';
-import 'package:carvita/presentation/navigation/app_router.dart';
+import 'package:petvita/core/constants/app_routes.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/data/repositories/maintenance_repository.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/manager/maintenance_plan/maintenance_plan_cubit.dart';
+import 'package:petvita/presentation/manager/service_log/service_log_cubit.dart';
+import 'package:petvita/presentation/navigation/app_route_arguments.dart';
+import 'package:petvita/presentation/navigation/app_router.dart';
 
 void main() {
   late MaintenancePlanCubit maintenancePlanCubit;
@@ -49,7 +49,7 @@ void main() {
   });
 
   test('typed argument routes preserve their RouteSettings', () {
-    final vehicle = Vehicle(
+    final vehicle = Pet(
       id: 1,
       name: 'Test vehicle',
       mileage: 12000,
@@ -59,7 +59,7 @@ void main() {
     final routeSettings = [
       RouteSettings(
         name: AppRoutes.addVehicleRoute,
-        arguments: AddEditVehicleRouteArguments(vehicle: vehicle),
+        arguments: AddEditPetRouteArguments(pet: vehicle),
       ),
       const RouteSettings(
         name: AppRoutes.vehicleDetailsRoute,

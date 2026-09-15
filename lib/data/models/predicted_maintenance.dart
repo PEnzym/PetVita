@@ -1,12 +1,12 @@
 import 'package:equatable/equatable.dart';
 
-import 'package:carvita/data/models/maintenance_plan_item.dart';
-import 'package:carvita/data/models/vehicle.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/data/models/pet.dart';
 
 enum PredictionBasis { time, mileage, timeAndMileageCombined, unknown }
 
 class PredictedMaintenanceInfo extends Equatable {
-  final Vehicle vehicle;
+  final Pet vehicle;
   final MaintenancePlanItem planItem;
   final DateTime predictedDueDate;
   final double? predictedAtMileage;

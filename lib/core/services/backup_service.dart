@@ -9,9 +9,9 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'package:carvita/application/ports/backup_preferences_port.dart';
-import 'package:carvita/data/sources/local/database_helper.dart';
-import 'package:carvita/data/sources/local/database_schema.dart';
+import 'package:petvita/application/ports/backup_preferences_port.dart';
+import 'package:petvita/data/sources/local/database_helper.dart';
+import 'package:petvita/data/sources/local/database_schema.dart';
 
 abstract interface class BackupDatabaseConnection {
   Future<void> close();
@@ -127,7 +127,7 @@ class BackupService implements BackupGateway {
         'customItemName',
       },
     },
-    DatabaseSchema.currentVersion: {
+    DatabaseSchema.previousVersion: {
       'vehicles': {
         'id',
         'name',
@@ -139,6 +139,57 @@ class BackupService implements BackupGateway {
         'plate_number',
         'vin',
         'engine_number',
+      },
+      'maintenance_plan_items': {
+        'id',
+        'vehicleId',
+        'itemName',
+        'intervalTimeMonths',
+        'intervalMileage',
+        'firstIntervalTimeMonths',
+        'firstIntervalMileage',
+        'notes',
+        'isActive',
+        'baselineDate',
+        'baselineMileage',
+      },
+      'service_log_entries': {
+        'id',
+        'vehicleId',
+        'serviceDate',
+        'mileageAtService',
+        'cost',
+        'notes',
+      },
+      'service_log_performed_items': {
+        'id',
+        'serviceLogId',
+        'maintenancePlanItemId',
+        'customItemName',
+      },
+    },
+    DatabaseSchema.currentVersion: {
+      'pets': {
+        'id',
+        'name',
+        'breed',
+        'birth_date',
+        'mileage',
+        'mileage_last_updated',
+        'bought_date',
+        'image',
+        'model',
+        'plate_number',
+        'vin',
+        'engine_number',
+      },
+      'weight_entries': {
+        'id',
+        'pet_id',
+        'measured_at',
+        'weight',
+        'unit',
+        'notes',
       },
       'maintenance_plan_items': {
         'id',
@@ -652,7 +703,7 @@ class BackupService implements BackupGateway {
       rethrow;
     } catch (error) {
       throw InvalidBackupException(
-        'The selected file is not a valid CarVita backup package.',
+        'The selected file is not a valid PetVita backup package.',
         cause: error,
       );
     }
@@ -722,7 +773,7 @@ class BackupService implements BackupGateway {
     }
     if (await databaseFile.length() < 100) {
       throw const InvalidBackupException(
-        'The selected file is not a valid CarVita database.',
+        'The selected file is not a valid PetVita database.',
       );
     }
 

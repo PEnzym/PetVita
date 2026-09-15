@@ -1,55 +1,55 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:carvita/application/use_cases/vehicle_use_cases.dart';
-import 'package:carvita/core/failures/app_failure.dart';
-import 'package:carvita/core/utils/operation_result.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'vehicle_state.dart';
+import 'package:petvita/application/use_cases/pet_use_cases.dart';
+import 'package:petvita/core/failures/app_failure.dart';
+import 'package:petvita/core/utils/operation_result.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'pet_state.dart';
 
-class VehicleCubit extends Cubit<VehicleState> {
-  final VehicleUseCases _useCases;
+class PetCubit extends Cubit<PetState> {
+  final PetUseCases _useCases;
   int _loadRevision = 0;
 
-  VehicleCubit(this._useCases) : super(VehicleInitial());
+  PetCubit(this._useCases) : super(PetInitial());
 
   Future<OperationResult> fetchVehicles() async {
     if (isClosed) {
       return OperationFailure.capture(
         AppFailureKind.load,
-        StateError('VehicleCubit is closed'),
+        StateError('PetCubit is closed'),
         StackTrace.current,
-        context: 'VehicleCubit.fetchVehicles.closed',
+        context: 'PetCubit.fetchVehicles.closed',
       );
     }
     final revision = ++_loadRevision;
-    final previousVehicles = state is VehicleLoaded
-        ? (state as VehicleLoaded).vehicles
+    final previousVehicles = state is PetLoaded
+        ? (state as PetLoaded).vehicles
         : null;
     if (previousVehicles == null) {
-      emit(VehicleLoading());
+      emit(PetLoading());
     } else {
-      emit(VehicleLoaded(previousVehicles, isRefreshing: true));
+      emit(PetLoaded(previousVehicles, isRefreshing: true));
     }
     try {
       final vehicles = await _useCases.getVehicles();
       if (isClosed || revision != _loadRevision) {
         return OperationSuccess();
       }
-      emit(VehicleLoaded(vehicles));
+      emit(PetLoaded(vehicles));
       return OperationSuccess();
     } catch (error, stackTrace) {
       final failure = OperationFailure.capture(
         previousVehicles == null ? AppFailureKind.load : AppFailureKind.refresh,
         error,
         stackTrace,
-        context: 'VehicleCubit.fetchVehicles',
+        context: 'PetCubit.fetchVehicles',
       );
       if (!isClosed && revision == _loadRevision) {
         if (previousVehicles == null) {
-          emit(VehicleError(failure.failure));
+          emit(PetError(failure.failure));
         } else {
           emit(
-            VehicleLoaded(previousVehicles, refreshFailure: failure.failure),
+            PetLoaded(previousVehicles, refreshFailure: failure.failure),
           );
         }
       }
@@ -57,7 +57,7 @@ class VehicleCubit extends Cubit<VehicleState> {
     }
   }
 
-  Future<OperationResult> addVehicle(Vehicle vehicle) async {
+  Future<OperationResult> addVehicle(Pet vehicle) async {
     try {
       await _useCases.addVehicle(vehicle);
     } catch (error, stackTrace) {
@@ -65,13 +65,13 @@ class VehicleCubit extends Cubit<VehicleState> {
         AppFailureKind.save,
         error,
         stackTrace,
-        context: 'VehicleCubit.addVehicle',
+        context: 'PetCubit.addVehicle',
       );
     }
     return _successAfterRefresh();
   }
 
-  Future<OperationResult> updateVehicle(Vehicle vehicle) async {
+  Future<OperationResult> updateVehicle(Pet vehicle) async {
     try {
       await _useCases.updateVehicle(vehicle);
     } catch (error, stackTrace) {
@@ -79,7 +79,7 @@ class VehicleCubit extends Cubit<VehicleState> {
         AppFailureKind.save,
         error,
         stackTrace,
-        context: 'VehicleCubit.updateVehicle',
+        context: 'PetCubit.updateVehicle',
       );
     }
     return _successAfterRefresh();
@@ -93,7 +93,7 @@ class VehicleCubit extends Cubit<VehicleState> {
         AppFailureKind.delete,
         error,
         stackTrace,
-        context: 'VehicleCubit.deleteVehicle',
+        context: 'PetCubit.deleteVehicle',
       );
     }
     return _successAfterRefresh();

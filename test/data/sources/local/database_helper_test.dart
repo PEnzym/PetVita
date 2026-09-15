@@ -6,14 +6,15 @@ import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart' as sqflite;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart' as ffi;
 
-import 'package:carvita/application/ports/clock.dart';
-import 'package:carvita/application/use_cases/load_upcoming_maintenance.dart';
-import 'package:carvita/core/services/prediction_service.dart';
-import 'package:carvita/data/sources/local/database_helper.dart';
-import 'package:carvita/data/models/maintenance_plan_item.dart';
-import 'package:carvita/data/models/service_log_entry.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/data/repositories/maintenance_repository.dart';
+import 'package:petvita/application/ports/clock.dart';
+import 'package:petvita/application/use_cases/load_upcoming_maintenance.dart';
+import 'package:petvita/core/services/prediction_service.dart';
+import 'package:petvita/data/sources/local/database_helper.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/data/models/weight_entry.dart';
+import 'package:petvita/data/repositories/maintenance_repository.dart';
 
 void main() {
   ffi.sqfliteFfiInit();
@@ -74,7 +75,7 @@ void main() {
         List<int>.generate(4096, (i) => i % 256),
       );
       final vehicleId = await databaseHelper.insertVehicle(
-        Vehicle(
+        Pet(
           name: 'Summary',
           mileage: 100,
           mileageLastUpdated: DateTime(2026, 7, 1),
@@ -105,7 +106,7 @@ void main() {
   );
 
   test('service logs and performed items use one read query', () async {
-    final vehicleId = await _insertVehicle(databaseHelper);
+    final vehicleId = await _insertPet(databaseHelper);
     final planId = await databaseHelper.insertMaintenancePlanItem(
       MaintenancePlanItem(
         vehicleId: vehicleId,
@@ -144,9 +145,49 @@ void main() {
     );
   });
 
+  test('weight entries are ordered and cascade when the pet is deleted', () async {
+    final petId = await _insertPet(databaseHelper);
+    final olderId = await databaseHelper.insertWeightEntry(
+      WeightEntry(
+        petId: petId,
+        measuredAt: DateTime(2026, 1, 1),
+        weight: 10,
+        unit: 'kg',
+      ),
+    );
+    await databaseHelper.insertWeightEntry(
+      WeightEntry(
+        petId: petId,
+        measuredAt: DateTime(2026, 2, 1),
+        weight: 10.5,
+        unit: 'kg',
+        notes: 'Healthy',
+      ),
+    );
+
+    final entries = await databaseHelper.getWeightEntriesForPet(petId);
+    expect(entries.map((entry) => entry.measuredAt), [
+      DateTime(2026, 2, 1),
+      DateTime(2026, 1, 1),
+    ]);
+
+    await databaseHelper.updateWeightEntry(
+      entries.last.copyWith(notes: 'Updated'),
+    );
+    expect(
+      (await databaseHelper.getWeightEntriesForPet(petId)).last.notes,
+      'Updated',
+    );
+
+    await databaseHelper.deleteWeightEntry(olderId);
+    expect(await databaseHelper.getWeightEntriesForPet(petId), hasLength(1));
+    await databaseHelper.deleteVehicle(petId);
+    expect(await databaseHelper.getWeightEntriesForPet(petId), isEmpty);
+  });
+
   test('prediction snapshot query count is constant as data grows', () async {
     for (var vehicleIndex = 0; vehicleIndex < 200; vehicleIndex++) {
-      final vehicleId = await _insertVehicle(
+      final vehicleId = await _insertPet(
         databaseHelper,
         name: 'Vehicle $vehicleIndex',
       );
@@ -201,12 +242,12 @@ final class _FixedClock implements Clock {
   DateTime now() => DateTime(2026, 7, 28);
 }
 
-Future<int> _insertVehicle(
+Future<int> _insertPet(
   DatabaseHelper databaseHelper, {
   String name = 'Vehicle',
 }) {
   return databaseHelper.insertVehicle(
-    Vehicle(
+    Pet(
       name: name,
       mileage: 1000,
       mileageLastUpdated: DateTime(2026, 1, 1),

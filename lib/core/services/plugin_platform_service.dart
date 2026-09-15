@@ -6,7 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:carvita/application/ports/platform_ports.dart';
+import 'package:petvita/application/ports/platform_ports.dart';
 
 final class PluginPlatformService
     implements

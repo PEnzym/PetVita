@@ -1,5 +1,5 @@
-name: carvita
-description: "Personal assistant for managing and predicting your vehicle's maintenance needs."
+name: petvita
+description: "Personal assistant for managing your pets' care and health needs."
 publish_to: 'none'
 version: 1.2.1+10
 

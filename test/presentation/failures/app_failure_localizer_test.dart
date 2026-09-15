@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:carvita/core/failures/app_failure.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/i18n/generated/app_localizations_en.dart';
-import 'package:carvita/presentation/failures/app_failure_localizer.dart';
+import 'package:petvita/core/failures/app_failure.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/i18n/generated/app_localizations_en.dart';
+import 'package:petvita/presentation/failures/app_failure_localizer.dart';
 
 void main() {
   final l10n = AppLocalizationsEn();

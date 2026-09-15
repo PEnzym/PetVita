@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class MaintenancePlanItem extends Equatable {
   final int? id;
-  final int vehicleId; // Foreign key to link with a Vehicle
+  final int vehicleId; // Foreign key to link with a Pet
   final String itemName;
   final int? intervalTimeMonths;
   final int? intervalMileage;

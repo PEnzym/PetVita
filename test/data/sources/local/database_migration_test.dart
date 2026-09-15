@@ -6,14 +6,14 @@ import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart' as sqflite;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart' as ffi;
 
-import 'package:carvita/application/ports/clock.dart';
-import 'package:carvita/core/services/prediction_service.dart';
-import 'package:carvita/data/models/maintenance_plan_item.dart';
-import 'package:carvita/data/models/service_log_entry.dart';
-import 'package:carvita/data/models/service_log_performed_item_link.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/data/sources/local/database_helper.dart';
-import 'package:carvita/data/sources/local/database_schema.dart';
+import 'package:petvita/application/ports/clock.dart';
+import 'package:petvita/core/services/prediction_service.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
+import 'package:petvita/data/models/service_log_performed_item_link.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/data/sources/local/database_helper.dart';
+import 'package:petvita/data/sources/local/database_schema.dart';
 
 void main() {
   ffi.sqfliteFfiInit();
@@ -40,11 +40,19 @@ void main() {
   });
 
   test(
-    'fresh install creates schema v2 with foreign keys and indexes',
+    'fresh install creates schema v3 with pets and weight history',
     () async {
       final database = await helper.database;
 
       expect(await _userVersion(database), DatabaseSchema.currentVersion);
+      expect(
+        await _columnNames(database, 'pets'),
+        containsAll({'id', 'name', 'breed', 'birth_date'}),
+      );
+      expect(
+        await _columnNames(database, 'weight_entries'),
+        containsAll({'pet_id', 'measured_at', 'weight', 'unit', 'notes'}),
+      );
       expect(await _foreignKeysEnabled(database), isTrue);
       expect(
         await _columnNames(database, 'maintenance_plan_items'),
@@ -80,12 +88,18 @@ void main() {
           singleInstance: false,
         ),
       );
-      final before = await _predictionSignatures(legacyDatabase);
+      final before = await _predictionSignatures(
+        legacyDatabase,
+        petTable: 'vehicles',
+      );
       final beforeCounts = await _tableCounts(legacyDatabase);
       await legacyDatabase.close();
 
       final migratedDatabase = await helper.database;
-      final after = await _predictionSignatures(migratedDatabase);
+      final after = await _predictionSignatures(
+        migratedDatabase,
+        petTable: 'pets',
+      );
 
       expect(beforeCounts, {
         'vehicles': 1,
@@ -94,8 +108,16 @@ void main() {
         'service_log_performed_items': 38,
       });
       expect(after, before);
-      expect(await _tableCounts(migratedDatabase), beforeCounts);
-      expect(await _userVersion(migratedDatabase), 2);
+      expect(
+        await _tableCounts(migratedDatabase, petTable: 'pets'),
+        {
+          'pets': 1,
+          'maintenance_plan_items': 9,
+          'service_log_entries': 12,
+          'service_log_performed_items': 38,
+        },
+      );
+      expect(await _userVersion(migratedDatabase), 3);
       expect(await _foreignKeysEnabled(migratedDatabase), isTrue);
       expect(
         await _indexNames(migratedDatabase),
@@ -104,9 +126,9 @@ void main() {
       expect((await helper.getConsistencyReport()).isClean, isTrue);
 
       final baselineRows = await migratedDatabase.rawQuery('''
-        SELECT plan.baselineDate, plan.baselineMileage, vehicle.bought_date
+        SELECT plan.baselineDate, plan.baselineMileage, pet.bought_date
         FROM maintenance_plan_items plan
-        JOIN vehicles vehicle ON vehicle.id = plan.vehicleId
+        JOIN pets pet ON pet.id = plan.vehicleId
       ''');
       expect(baselineRows, hasLength(9));
       for (final row in baselineRows) {
@@ -286,15 +308,15 @@ void main() {
     'migration is idempotent and never moves an existing baseline',
     () async {
       final database = await helper.database;
-      await database.insert('vehicles', _vehicleValues(id: 1, name: 'One'));
+      await database.insert('pets', _vehicleValues(id: 1, name: 'One'));
       await database.insert('maintenance_plan_items', {
         ..._planValues(id: 1, vehicleId: 1, name: 'Oil'),
         'baselineDate': '2026-06-01T00:00:00.000',
         'baselineMileage': 12345.0,
       });
 
-      await DatabaseSchema.upgrade(database, 1, 2);
-      await DatabaseSchema.upgrade(database, 1, 2);
+      await DatabaseSchema.upgrade(database, 2, 3);
+      await DatabaseSchema.upgrade(database, 2, 3);
 
       final plan = (await database.query('maintenance_plan_items')).single;
       expect(plan['baselineDate'], '2026-06-01T00:00:00.000');
@@ -311,7 +333,7 @@ void main() {
     'plan creation captures baseline atomically and edits preserve it',
     () async {
       final vehicleId = await helper.insertVehicle(
-        Vehicle(
+        Pet(
           name: 'Vehicle',
           mileage: 45678,
           mileageLastUpdated: DateTime(2026, 7, 1),
@@ -356,7 +378,7 @@ void main() {
     'foreign keys cascade deletes while soft delete retains history',
     () async {
       final vehicleId = await helper.insertVehicle(
-        Vehicle(
+        Pet(
           name: 'Vehicle',
           mileage: 1000,
           mileageLastUpdated: DateTime(2026, 1, 1),
@@ -447,7 +469,7 @@ void main() {
     await database.transaction((transaction) async {
       for (var index = 0; index < 500; index++) {
         final vehicleId = await transaction.insert(
-          'vehicles',
+          'pets',
           _vehicleValues(name: 'Vehicle $index'),
         );
         final planId = await transaction.insert('maintenance_plan_items', {
@@ -467,7 +489,7 @@ void main() {
     });
     stopwatch.stop();
 
-    expect((await _tableCounts(database))['vehicles'], 500);
+    expect((await _tableCounts(database, petTable: 'pets'))['pets'], 500);
     expect(await database.rawQuery('PRAGMA foreign_key_check'), isEmpty);
     debugPrint(
       'v2 indexed write benchmark: 500 vehicle/plan/log/link groups in '
@@ -601,14 +623,21 @@ Future<Set<String>> _indexNames(sqflite.Database database) async {
   return rows.map((row) => row['name']).whereType<String>().toSet();
 }
 
-Future<Map<String, int>> _tableCounts(sqflite.Database database) async {
+Future<Map<String, int>> _tableCounts(
+  sqflite.Database database, {
+  String petTable = 'vehicles',
+}) async {
   const tables = [
-    'vehicles',
     'maintenance_plan_items',
     'service_log_entries',
     'service_log_performed_items',
   ];
   return {
+    petTable:
+        sqflite.Sqflite.firstIntValue(
+          await database.rawQuery('SELECT COUNT(*) FROM $petTable'),
+        ) ??
+        0,
     for (final table in tables)
       table:
           sqflite.Sqflite.firstIntValue(
@@ -618,10 +647,13 @@ Future<Map<String, int>> _tableCounts(sqflite.Database database) async {
   };
 }
 
-Future<List<String>> _predictionSignatures(sqflite.Database database) async {
+Future<List<String>> _predictionSignatures(
+  sqflite.Database database, {
+  required String petTable,
+}) async {
   final vehicles = (await database.query(
-    'vehicles',
-  )).map(Vehicle.fromMap).toList(growable: false);
+    petTable,
+  )).map(Pet.fromMap).toList(growable: false);
   final plans = (await database.query(
     'maintenance_plan_items',
   )).map(MaintenancePlanItem.fromMap).toList(growable: false);

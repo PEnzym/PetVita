@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:carvita/application/ports/clock.dart';
-import 'package:carvita/application/ports/notification_tap_port.dart';
-import 'package:carvita/core/services/notification_service.dart';
+import 'package:petvita/application/ports/clock.dart';
+import 'package:petvita/application/ports/notification_tap_port.dart';
+import 'package:petvita/core/services/notification_service.dart';
 
 void main() {
   test('cold-start and runtime taps enter the same payload sink', () async {

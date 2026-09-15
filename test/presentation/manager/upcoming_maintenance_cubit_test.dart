@@ -5,24 +5,24 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:intl/date_symbol_data_local.dart';
 
-import 'package:carvita/application/ports/clock.dart';
-import 'package:carvita/application/ports/reminder_schedule_port.dart';
-import 'package:carvita/application/reminders/maintenance_reminder_payload.dart';
-import 'package:carvita/application/queries/maintenance_data_snapshot.dart';
-import 'package:carvita/application/use_cases/load_upcoming_maintenance.dart';
-import 'package:carvita/application/use_cases/synchronize_maintenance_reminders.dart';
-import 'package:carvita/core/services/notification_coordinator.dart';
-import 'package:carvita/core/services/notification_service.dart';
-import 'package:carvita/core/services/prediction_service.dart';
-import 'package:carvita/core/services/preferences_service.dart';
-import 'package:carvita/data/models/maintenance_plan_item.dart';
-import 'package:carvita/data/models/service_log_entry.dart';
-import 'package:carvita/data/models/service_log_performed_item_link.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/data/repositories/maintenance_repository.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
-import 'package:carvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_state.dart';
+import 'package:petvita/application/ports/clock.dart';
+import 'package:petvita/application/ports/reminder_schedule_port.dart';
+import 'package:petvita/application/reminders/maintenance_reminder_payload.dart';
+import 'package:petvita/application/queries/maintenance_data_snapshot.dart';
+import 'package:petvita/application/use_cases/load_upcoming_maintenance.dart';
+import 'package:petvita/application/use_cases/synchronize_maintenance_reminders.dart';
+import 'package:petvita/core/services/notification_coordinator.dart';
+import 'package:petvita/core/services/notification_service.dart';
+import 'package:petvita/core/services/prediction_service.dart';
+import 'package:petvita/core/services/preferences_service.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
+import 'package:petvita/data/models/service_log_performed_item_link.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/data/repositories/maintenance_repository.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
+import 'package:petvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_state.dart';
 
 void main() {
   final now = DateTime(2026, 7, 27, 9);
@@ -263,8 +263,8 @@ UpcomingMaintenanceCubit _buildCubit(
   );
 }
 
-Vehicle _vehicle() {
-  return Vehicle(
+Pet _vehicle() {
+  return Pet(
     id: 1,
     name: 'Vehicle',
     mileage: 1000,

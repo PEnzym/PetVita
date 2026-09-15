@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:carvita/application/ports/notification_replacement_port.dart';
-import 'package:carvita/core/services/notification_service.dart';
+import 'package:petvita/application/ports/notification_replacement_port.dart';
+import 'package:petvita/core/services/notification_service.dart';
 
-export 'package:carvita/application/ports/notification_replacement_port.dart'
+export 'package:petvita/application/ports/notification_replacement_port.dart'
     show NotificationRequest, maintenanceNotificationId;
 
 /// Serializes notification replacement so an older refresh cannot finish after

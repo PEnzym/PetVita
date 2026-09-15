@@ -12,10 +12,10 @@
 </p>
 
 <p align="center">
-  <img src="../../assets/icon/icon.png" width="120" title="CarVita">
+  <img src="../../assets/icon/icon.png" width="120" title="PetVita">
 </p>
 
-<h1 align="center">CarVita</h1>
+<h1 align="center">PetVita</h1>
 <h3 align="center">管理和预测你的车辆保养需求</h3>
 
 ![](../assets/feature_graphic/output/zh/gh-header_image.jpg)
@@ -26,7 +26,7 @@
   <a href="./README_zh.md">中文</a>
 </p>
 
-## CarVita 能做什么？
+## PetVita 能做什么？
 
 ✅ **车辆状态一目了然：** 清晰的仪表盘让您对车辆和最紧急的保养项目一目了然。
 

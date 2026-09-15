@@ -8,29 +8,29 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:carvita/application/ports/clock.dart';
-import 'package:carvita/application/ports/reminder_schedule_port.dart';
-import 'package:carvita/application/use_cases/load_upcoming_maintenance.dart';
-import 'package:carvita/application/use_cases/maintenance_plan_use_cases.dart';
-import 'package:carvita/application/use_cases/service_log_use_cases.dart';
-import 'package:carvita/application/use_cases/synchronize_maintenance_reminders.dart';
-import 'package:carvita/application/use_cases/vehicle_use_cases.dart';
-import 'package:carvita/core/services/notification_coordinator.dart';
-import 'package:carvita/core/services/notification_service.dart';
-import 'package:carvita/core/services/prediction_service.dart';
-import 'package:carvita/core/services/preferences_service.dart';
-import 'package:carvita/core/theme/app_theme.dart';
-import 'package:carvita/data/models/maintenance_plan_item.dart';
-import 'package:carvita/data/models/service_log_entry.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/data/repositories/maintenance_repository.dart';
-import 'package:carvita/data/repositories/vehicle_repository.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/manager/locale_provider.dart';
-import 'package:carvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_cubit.dart';
-import 'package:carvita/presentation/navigation/app_route_arguments.dart';
-import 'package:carvita/presentation/screens/vehicle/vehicle_details_screen.dart';
+import 'package:petvita/application/ports/clock.dart';
+import 'package:petvita/application/ports/reminder_schedule_port.dart';
+import 'package:petvita/application/use_cases/load_upcoming_maintenance.dart';
+import 'package:petvita/application/use_cases/maintenance_plan_use_cases.dart';
+import 'package:petvita/application/use_cases/service_log_use_cases.dart';
+import 'package:petvita/application/use_cases/synchronize_maintenance_reminders.dart';
+import 'package:petvita/application/use_cases/pet_use_cases.dart';
+import 'package:petvita/core/services/notification_coordinator.dart';
+import 'package:petvita/core/services/notification_service.dart';
+import 'package:petvita/core/services/prediction_service.dart';
+import 'package:petvita/core/services/preferences_service.dart';
+import 'package:petvita/core/theme/app_theme.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/data/repositories/maintenance_repository.dart';
+import 'package:petvita/data/repositories/pet_repository.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/manager/locale_provider.dart';
+import 'package:petvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
+import 'package:petvita/presentation/manager/vehicle_list/pet_cubit.dart';
+import 'package:petvita/presentation/navigation/app_route_arguments.dart';
+import 'package:petvita/presentation/screens/vehicle/vehicle_details_screen.dart';
 
 void main() {
   setUp(() {
@@ -40,15 +40,15 @@ void main() {
   testWidgets('slow and null vehicle loads never build vehicle actions', (
     tester,
   ) async {
-    final vehicleRepository = _DeferredVehicleRepository();
+    final vehicleRepository = _DeferredPetRepository();
     final maintenanceRepository = _CountingMaintenanceRepository();
     final preferences = PreferencesService();
-    final vehicleUseCases = VehicleUseCases(vehicleRepository, preferences);
+    final vehicleUseCases = PetUseCases(vehicleRepository, preferences);
     final maintenancePlanUseCases = MaintenancePlanUseCases(
       maintenanceRepository,
     );
     final serviceLogUseCases = ServiceLogUseCases(maintenanceRepository);
-    final vehicleCubit = VehicleCubit(vehicleUseCases);
+    final vehicleCubit = PetCubit(vehicleUseCases);
 
     await tester.pumpWidget(
       _testApp(
@@ -85,16 +85,16 @@ void main() {
   });
 
   testWidgets('loaded vehicle creates each tab resource once', (tester) async {
-    final vehicleRepository = _DeferredVehicleRepository()
+    final vehicleRepository = _DeferredPetRepository()
       ..completer.complete(_vehicle());
     final maintenanceRepository = _CountingMaintenanceRepository();
     final preferences = PreferencesService();
-    final vehicleUseCases = VehicleUseCases(vehicleRepository, preferences);
+    final vehicleUseCases = PetUseCases(vehicleRepository, preferences);
     final maintenancePlanUseCases = MaintenancePlanUseCases(
       maintenanceRepository,
     );
     final serviceLogUseCases = ServiceLogUseCases(maintenanceRepository);
-    final vehicleCubit = VehicleCubit(vehicleUseCases);
+    final vehicleCubit = PetCubit(vehicleUseCases);
 
     await tester.pumpWidget(
       _testApp(
@@ -134,16 +134,16 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    final vehicleRepository = _DeferredVehicleRepository()
+    final vehicleRepository = _DeferredPetRepository()
       ..completer.complete(_vehicle());
     final maintenanceRepository = _CountingMaintenanceRepository();
     final preferences = PreferencesService();
-    final vehicleUseCases = VehicleUseCases(vehicleRepository, preferences);
+    final vehicleUseCases = PetUseCases(vehicleRepository, preferences);
     final maintenancePlanUseCases = MaintenancePlanUseCases(
       maintenanceRepository,
     );
     final serviceLogUseCases = ServiceLogUseCases(maintenanceRepository);
-    final vehicleCubit = VehicleCubit(vehicleUseCases);
+    final vehicleCubit = PetCubit(vehicleUseCases);
 
     await tester.pumpWidget(
       _testApp(
@@ -169,20 +169,20 @@ void main() {
     await vehicleCubit.close();
   });
 
-  testWidgets('vehicle details render a Persian plate as RTL content', (
+  testWidgets('pet details render an RTL breed as RTL content', (
     tester,
   ) async {
-    const plateNumber = '۱۲ ۳۴۵ الف ۶۷';
-    final vehicleRepository = _DeferredVehicleRepository()
-      ..completer.complete(_vehicle().copyWith(plateNumber: plateNumber));
+    const breed = 'ژرمن شپرد';
+    final vehicleRepository = _DeferredPetRepository()
+      ..completer.complete(_vehicle().copyWith(breed: breed));
     final maintenanceRepository = _CountingMaintenanceRepository();
     final preferences = PreferencesService();
-    final vehicleUseCases = VehicleUseCases(vehicleRepository, preferences);
+    final vehicleUseCases = PetUseCases(vehicleRepository, preferences);
     final maintenancePlanUseCases = MaintenancePlanUseCases(
       maintenanceRepository,
     );
     final serviceLogUseCases = ServiceLogUseCases(maintenanceRepository);
-    final vehicleCubit = VehicleCubit(vehicleUseCases);
+    final vehicleCubit = PetCubit(vehicleUseCases);
 
     await tester.pumpWidget(
       _testApp(
@@ -202,17 +202,17 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final plateText = tester.widget<Text>(find.text(plateNumber));
-    expect(plateText.textDirection, TextDirection.rtl);
+    final breedText = tester.widget<Text>(find.text(breed));
+    expect(breedText.textDirection, TextDirection.rtl);
     await vehicleCubit.close();
   });
 }
 
 Widget _testApp({
-  required VehicleCubit vehicleCubit,
-  required VehicleRepository vehicleRepository,
+  required PetCubit vehicleCubit,
+  required PetRepository vehicleRepository,
   required MaintenanceRepository maintenanceRepository,
-  required VehicleUseCases vehicleUseCases,
+  required PetUseCases vehicleUseCases,
   required MaintenancePlanUseCases maintenancePlanUseCases,
   required ServiceLogUseCases serviceLogUseCases,
   required Widget child,
@@ -226,10 +226,10 @@ Widget _testApp({
   return MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => LocaleProvider(preferences)),
-      Provider<VehicleUseCases>.value(value: vehicleUseCases),
+      Provider<PetUseCases>.value(value: vehicleUseCases),
       Provider<MaintenancePlanUseCases>.value(value: maintenancePlanUseCases),
       Provider<ServiceLogUseCases>.value(value: serviceLogUseCases),
-      BlocProvider<VehicleCubit>.value(value: vehicleCubit),
+      BlocProvider<PetCubit>.value(value: vehicleCubit),
       BlocProvider(
         create: (_) => UpcomingMaintenanceCubit(
           LoadUpcomingMaintenance(
@@ -271,8 +271,8 @@ Widget _testApp({
   );
 }
 
-Vehicle _vehicle() {
-  return Vehicle(
+Pet _vehicle() {
+  return Pet(
     id: 1,
     name: 'Vehicle',
     mileage: 1000,
@@ -281,11 +281,11 @@ Vehicle _vehicle() {
   );
 }
 
-class _DeferredVehicleRepository extends VehicleRepository {
-  final Completer<Vehicle?> completer = Completer<Vehicle?>();
+class _DeferredPetRepository extends PetRepository {
+  final Completer<Pet?> completer = Completer<Pet?>();
 
   @override
-  Future<Vehicle?> getVehicleById(int id) => completer.future;
+  Future<Pet?> getVehicleById(int id) => completer.future;
 }
 
 class _NoopNotificationGateway implements NotificationGateway {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/navigation/main_navigation_controller.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/navigation/main_navigation_controller.dart';
 import 'package:provider/provider.dart';
 
 class MainBottomNavigationBar extends StatelessWidget {

@@ -1,31 +1,31 @@
-import 'package:carvita/data/models/maintenance_plan_item.dart';
-import 'package:carvita/data/models/service_log_entry.dart';
-import 'package:carvita/data/models/service_log_performed_item_link.dart';
-import 'package:carvita/data/models/vehicle.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
+import 'package:petvita/data/models/service_log_performed_item_link.dart';
+import 'package:petvita/data/models/pet.dart';
 
 /// A consistent, read-only set of maintenance inputs used by one prediction
 /// refresh.
 final class MaintenanceDataSnapshot {
   MaintenanceDataSnapshot({
-    required Iterable<Vehicle> vehicles,
+    required Iterable<Pet> vehicles,
     required Iterable<MaintenancePlanItem> planItems,
     required Iterable<ServiceLogEntry> serviceLogs,
     required Iterable<ServiceLogPerformedItemLink> performedItemLinks,
-  }) : vehicles = List<Vehicle>.unmodifiable(vehicles),
-       planItemsByVehicleId = _groupByVehicle(
+  }) : vehicles = List<Pet>.unmodifiable(vehicles),
+       planItemsByVehicleId = _groupByPet(
          planItems,
          (item) => item.vehicleId,
        ),
-       serviceLogsByVehicleId = _groupByVehicle(
+       serviceLogsByVehicleId = _groupByPet(
          serviceLogs,
          (log) => log.vehicleId,
        ),
-       performedItemLinksByVehicleId = _groupLinksByVehicle(
+       performedItemLinksByVehicleId = _groupLinksByPet(
          serviceLogs,
          performedItemLinks,
        );
 
-  final List<Vehicle> vehicles;
+  final List<Pet> vehicles;
   final Map<int, List<MaintenancePlanItem>> planItemsByVehicleId;
   final Map<int, List<ServiceLogEntry>> serviceLogsByVehicleId;
   final Map<int, List<ServiceLogPerformedItemLink>>
@@ -45,7 +45,7 @@ final class MaintenanceDataSnapshot {
     });
   }
 
-  static Map<int, List<ServiceLogPerformedItemLink>> _groupLinksByVehicle(
+  static Map<int, List<ServiceLogPerformedItemLink>> _groupLinksByPet(
     Iterable<ServiceLogEntry> serviceLogs,
     Iterable<ServiceLogPerformedItemLink> links,
   ) {

@@ -3,26 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:carvita/core/constants/app_routes.dart';
-import 'package:carvita/data/models/predicted_maintenance.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/formatters/bidi_text_direction.dart';
-import 'package:carvita/presentation/manager/locale_provider.dart';
-import 'package:carvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
-import 'package:carvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_state.dart';
-import 'package:carvita/presentation/navigation/app_route_arguments.dart';
-import 'package:carvita/presentation/screens/vehicle/widgets/info_grid_item.dart';
-import 'package:carvita/presentation/screens/vehicle/widgets/maintenance_list_item_card.dart';
+import 'package:petvita/core/constants/app_routes.dart';
+import 'package:petvita/data/models/predicted_maintenance.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/formatters/bidi_text_direction.dart';
+import 'package:petvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
+import 'package:petvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_state.dart';
+import 'package:petvita/presentation/navigation/app_route_arguments.dart';
+import 'package:petvita/presentation/screens/vehicle/widgets/info_grid_item.dart';
+import 'package:petvita/presentation/screens/vehicle/widgets/maintenance_list_item_card.dart';
 
 class OverviewTab extends StatelessWidget {
-  final Vehicle vehicle;
+  final Pet vehicle;
 
   const OverviewTab({super.key, required this.vehicle});
 
   @override
   Widget build(BuildContext context) {
-    final localeProvider = context.watch<LocaleProvider>();
     return BlocBuilder<UpcomingMaintenanceCubit, UpcomingMaintenanceState>(
       builder: (context, upcomingState) {
         List<PredictedMaintenanceInfo> allPredictions = [];
@@ -43,7 +41,7 @@ class OverviewTab extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      AppLocalizations.of(context)!.vehicleInfo,
+                      AppLocalizations.of(context)!.petName,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w500,
@@ -56,8 +54,8 @@ class OverviewTab extends StatelessWidget {
                       Navigator.pushNamed(
                         context,
                         AppRoutes.addVehicleRoute,
-                        arguments: AddEditVehicleRouteArguments(
-                          vehicle: vehicle,
+                        arguments: AddEditPetRouteArguments(
+                          pet: vehicle,
                         ),
                       );
                     },
@@ -82,38 +80,21 @@ class OverviewTab extends StatelessWidget {
                     children: [
                       SizedBox(
                         width: itemWidth,
-                        child: InfoGridItem(
-                          label: AppLocalizations.of(
-                            context,
-                          )!.mileageLabelWithUnit(""),
-                          value: AppLocalizations.of(context)!.nMileage(
-                            vehicle.mileage.round(),
-                            localeProvider.mileageUnit,
-                          ),
+                        child: _directionalInfoItem(
+                          context,
+                          label: AppLocalizations.of(context)!.petBreed,
+                          value: vehicle.breed,
                         ),
                       ),
                       SizedBox(
                         width: itemWidth,
                         child: _directionalInfoItem(
                           context,
-                          label: AppLocalizations.of(context)!.plateNumber,
-                          value: vehicle.plateNumber,
-                        ),
-                      ),
-                      SizedBox(
-                        width: itemWidth,
-                        child: _directionalInfoItem(
-                          context,
-                          label: AppLocalizations.of(context)!.engineNumber,
-                          value: vehicle.engineNumber,
-                        ),
-                      ),
-                      SizedBox(
-                        width: itemWidth,
-                        child: _directionalInfoItem(
-                          context,
-                          label: AppLocalizations.of(context)!.vin,
-                          value: vehicle.vin,
+                          label: AppLocalizations.of(context)!.petBirthDate,
+                          value: vehicle.birthDate == null
+                              ? null
+                              : MaterialLocalizations.of(context)
+                                    .formatMediumDate(vehicle.birthDate!),
                         ),
                       ),
                     ],

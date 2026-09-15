@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:carvita/core/constants/app_routes.dart';
-import 'package:carvita/core/services/maintenance_reminder_tap_service.dart';
-import 'package:carvita/core/services/navigation_service.dart';
-import 'package:carvita/presentation/navigation/app_route_arguments.dart';
-import 'package:carvita/presentation/navigation/main_navigation_controller.dart';
+import 'package:petvita/core/constants/app_routes.dart';
+import 'package:petvita/core/services/maintenance_reminder_tap_service.dart';
+import 'package:petvita/core/services/navigation_service.dart';
+import 'package:petvita/presentation/navigation/app_route_arguments.dart';
+import 'package:petvita/presentation/navigation/main_navigation_controller.dart';
 
 class DefaultMaintenanceReminderNavigation
     implements MaintenanceReminderNavigation {

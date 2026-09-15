@@ -4,11 +4,12 @@ import 'dart:typed_data';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'package:carvita/data/models/maintenance_plan_item.dart';
-import 'package:carvita/data/models/service_log_entry.dart';
-import 'package:carvita/data/models/service_log_performed_item_link.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/data/sources/local/database_schema.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
+import 'package:petvita/data/models/service_log_performed_item_link.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/data/models/weight_entry.dart';
+import 'package:petvita/data/sources/local/database_schema.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -131,25 +132,27 @@ class DatabaseHelper {
 
   // --- vehicle CRUD ---
 
-  Future<int> insertVehicle(Vehicle vehicle) async {
+  Future<int> insertVehicle(Pet vehicle) async {
     final db = await database;
     Map<String, dynamic> vehicleMap = vehicle.toMap();
     vehicleMap.remove('id'); // make SQLite auto-increment
     return await db.insert(
-      'vehicles',
+      'pets',
       vehicleMap,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  Future<List<Vehicle>> getAllVehicles() async {
+  Future<List<Pet>> getAllVehicles() async {
     final db = await database;
     _diagnosticReadQueryCount++;
     final List<Map<String, dynamic>> maps = await db.query(
-      'vehicles',
+      'pets',
       columns: const [
         'id',
         'name',
+        'breed',
+        'birth_date',
         'mileage',
         'mileage_last_updated',
         'bought_date',
@@ -163,19 +166,19 @@ class DatabaseHelper {
     if (maps.isEmpty) {
       return [];
     }
-    return List.generate(maps.length, (i) => Vehicle.fromMap(maps[i]));
+    return List.generate(maps.length, (i) => Pet.fromMap(maps[i]));
   }
 
-  Future<Vehicle?> getVehicleById(int id) async {
+  Future<Pet?> getVehicleById(int id) async {
     final db = await database;
     _diagnosticReadQueryCount++;
     final List<Map<String, dynamic>> maps = await db.query(
-      'vehicles',
+      'pets',
       where: 'id = ?',
       whereArgs: [id],
     );
     if (maps.isNotEmpty) {
-      return Vehicle.fromMap(maps.first);
+      return Pet.fromMap(maps.first);
     }
     return null;
   }
@@ -184,7 +187,7 @@ class DatabaseHelper {
     final db = await database;
     _diagnosticReadQueryCount++;
     final maps = await db.query(
-      'vehicles',
+      'pets',
       columns: const ['image'],
       where: 'id = ?',
       whereArgs: [id],
@@ -194,14 +197,14 @@ class DatabaseHelper {
     return maps.first['image'] as Uint8List?;
   }
 
-  Future<int> updateVehicle(Vehicle vehicle) async {
+  Future<int> updateVehicle(Pet vehicle) async {
     final db = await database;
     final values = vehicle.toMap();
     if (!vehicle.imageLoaded) {
       values.remove('image');
     }
     return await db.update(
-      'vehicles',
+      'pets',
       values,
       where: 'id = ?',
       whereArgs: [vehicle.id],
@@ -210,7 +213,46 @@ class DatabaseHelper {
 
   Future<int> deleteVehicle(int id) async {
     final db = await database;
-    return await db.delete('vehicles', where: 'id = ?', whereArgs: [id]);
+    return await db.delete('pets', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<int> insertWeightEntry(WeightEntry entry) async {
+    final db = await database;
+    final values = entry.toMap()..remove('id');
+    return db.insert(
+      'weight_entries',
+      values,
+      conflictAlgorithm: ConflictAlgorithm.abort,
+    );
+  }
+
+  Future<List<WeightEntry>> getWeightEntriesForPet(int petId) async {
+    final db = await database;
+    final rows = await db.query(
+      'weight_entries',
+      where: 'pet_id = ?',
+      whereArgs: [petId],
+      orderBy: 'measured_at DESC, id DESC',
+    );
+    return rows.map(WeightEntry.fromMap).toList(growable: false);
+  }
+
+  Future<int> updateWeightEntry(WeightEntry entry) async {
+    final db = await database;
+    final values = entry.toMap()
+      ..remove('id')
+      ..remove('pet_id');
+    return db.update(
+      'weight_entries',
+      values,
+      where: 'id = ? AND pet_id = ?',
+      whereArgs: [entry.id, entry.petId],
+    );
+  }
+
+  Future<int> deleteWeightEntry(int id) async {
+    final db = await database;
+    return db.delete('weight_entries', where: 'id = ?', whereArgs: [id]);
   }
 
   // --- Maintenance plan CRUD ---
@@ -222,7 +264,7 @@ class DatabaseHelper {
     final db = await database;
     return db.transaction((transaction) async {
       final vehicleRows = await transaction.query(
-        'vehicles',
+        'pets',
         columns: const ['mileage'],
         where: 'id = ?',
         whereArgs: [item.vehicleId],
@@ -498,7 +540,7 @@ class DatabaseHelper {
       List<MaintenancePlanItem> planItems,
       List<ServiceLogEntry> serviceLogs,
       List<ServiceLogPerformedItemLink> performedItemLinks,
-      List<Vehicle> vehicles,
+      List<Pet> vehicles,
     })
   >
   getPredictionSnapshotRows() async {
@@ -506,10 +548,12 @@ class DatabaseHelper {
     return db.transaction((transaction) async {
       _diagnosticReadQueryCount++;
       final vehicleMaps = await transaction.query(
-        'vehicles',
+        'pets',
         columns: const [
           'id',
           'name',
+          'breed',
+          'birth_date',
           'mileage',
           'mileage_last_updated',
           'bought_date',
@@ -541,7 +585,7 @@ class DatabaseHelper {
       );
 
       return (
-        vehicles: vehicleMaps.map(Vehicle.fromMap).toList(growable: false),
+        vehicles: vehicleMaps.map(Pet.fromMap).toList(growable: false),
         planItems: planMaps
             .map(MaintenancePlanItem.fromMap)
             .toList(growable: false),

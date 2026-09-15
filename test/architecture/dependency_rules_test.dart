@@ -8,7 +8,7 @@ void main() {
         .where((file) {
           final source = file.readAsStringSync();
           return source.contains("import 'package:flutter/") ||
-              source.contains("import 'package:carvita/i18n/generated/");
+              source.contains("import 'package:petvita/i18n/generated/");
         })
         .map((file) => file.path)
         .toList();
@@ -21,9 +21,9 @@ void main() {
         .where((file) {
           final source = file.readAsStringSync();
           return source.contains(
-                "import 'package:carvita/presentation/screens/",
+                "import 'package:petvita/presentation/screens/",
               ) ||
-              source.contains("import 'package:carvita/presentation/manager/");
+              source.contains("import 'package:petvita/presentation/manager/");
         })
         .map((file) => file.path)
         .toList();
@@ -33,7 +33,7 @@ void main() {
 
   test('screens receive repositories and platform services by injection', () {
     final directConstruction = RegExp(
-      r'\b(?:VehicleRepository|MaintenanceRepository|PreferencesService|'
+      r'\b(?:PetRepository|MaintenanceRepository|PreferencesService|'
       r'BackupService|NotificationService)\s*\(',
     );
     final violations = _dartFilesUnder('lib/presentation/screens')
@@ -48,7 +48,7 @@ void main() {
     final violations = _dartFilesUnder('lib/presentation')
         .where(
           (file) => file.readAsStringSync().contains(
-            "import 'package:carvita/data/repositories/",
+            "import 'package:petvita/data/repositories/",
           ),
         )
         .map((file) => file.path)
@@ -64,8 +64,8 @@ void main() {
           .where((file) {
             final source = file.readAsStringSync();
             return source.contains("import 'package:flutter/") ||
-                source.contains("import 'package:carvita/presentation/") ||
-                source.contains("import 'package:carvita/i18n/generated/");
+                source.contains("import 'package:petvita/presentation/") ||
+                source.contains("import 'package:petvita/i18n/generated/");
           })
           .map((file) => file.path)
           .toList();
@@ -89,7 +89,7 @@ void main() {
 
   test('concrete repositories and platform services are composed in main', () {
     final directConstruction = RegExp(
-      r'\b(?:VehicleRepository|MaintenanceRepository|BackupService|'
+      r'\b(?:PetRepository|MaintenanceRepository|BackupService|'
       r'NotificationService|PredictionService|ReminderScheduleService|'
       r'MethodChannelDeviceTimeZone|MaintenanceReminderTapService)\s*\(',
     );

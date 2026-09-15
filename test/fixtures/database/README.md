@@ -1,6 +1,6 @@
 # Database migration fixtures
 
-`carvita_v1.db` is a maintainer-provided, anonymized schema-v1 CarVita
+`carvita_v1.db` is a maintainer-provided, anonymized schema-v1 PetVita
 database used only by migration and backup compatibility tests.
 
 - SHA-256:

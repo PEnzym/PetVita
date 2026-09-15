@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:carvita/application/ports/backup_preferences_port.dart';
-import 'package:carvita/application/ports/preferences_ports.dart';
+import 'package:petvita/application/ports/backup_preferences_port.dart';
+import 'package:petvita/application/ports/preferences_ports.dart';
 
 enum AppThemePreference { system, light, dark, custom }
 

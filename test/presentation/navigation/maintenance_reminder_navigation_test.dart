@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:carvita/core/constants/app_routes.dart';
-import 'package:carvita/core/services/navigation_service.dart';
-import 'package:carvita/presentation/navigation/app_route_arguments.dart';
-import 'package:carvita/presentation/navigation/default_maintenance_reminder_navigation.dart';
-import 'package:carvita/presentation/navigation/main_navigation_controller.dart';
+import 'package:petvita/core/constants/app_routes.dart';
+import 'package:petvita/core/services/navigation_service.dart';
+import 'package:petvita/presentation/navigation/app_route_arguments.dart';
+import 'package:petvita/presentation/navigation/default_maintenance_reminder_navigation.dart';
+import 'package:petvita/presentation/navigation/main_navigation_controller.dart';
 
 void main() {
   testWidgets('valid reminder navigation opens the maintenance-plan tab', (

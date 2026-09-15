@@ -1,13 +1,13 @@
-import 'package:carvita/data/models/maintenance_plan_item.dart';
-import 'package:carvita/data/models/service_log_entry.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/presentation/manager/maintenance_plan/maintenance_plan_cubit.dart';
-import 'package:carvita/presentation/manager/service_log/service_log_cubit.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/presentation/manager/maintenance_plan/maintenance_plan_cubit.dart';
+import 'package:petvita/presentation/manager/service_log/service_log_cubit.dart';
 
-class AddEditVehicleRouteArguments {
-  final Vehicle? vehicle;
+class AddEditPetRouteArguments {
+  final Pet? pet;
 
-  const AddEditVehicleRouteArguments({this.vehicle});
+  const AddEditPetRouteArguments({this.pet});
 }
 
 enum VehicleDetailsTab { overview, maintenancePlan, serviceHistory }

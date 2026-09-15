@@ -1,19 +1,19 @@
 import 'dart:collection';
 import 'dart:typed_data';
 
-import 'package:carvita/application/use_cases/vehicle_use_cases.dart';
+import 'package:petvita/application/use_cases/pet_use_cases.dart';
 
 /// Bounded LRU cache for vehicle image bytes loaded separately from list
 /// summaries.
-final class VehicleImageCache {
-  VehicleImageCache(
+final class PetImageCache {
+  PetImageCache(
     this._vehicleUseCases, {
     this.maximumEntries = 24,
     this.maximumBytes = 16 * 1024 * 1024,
   }) : assert(maximumEntries > 0),
        assert(maximumBytes > 0);
 
-  final VehicleUseCases _vehicleUseCases;
+  final PetUseCases _vehicleUseCases;
   final int maximumEntries;
   final int maximumBytes;
   final LinkedHashMap<int, Future<Uint8List?>> _entries =

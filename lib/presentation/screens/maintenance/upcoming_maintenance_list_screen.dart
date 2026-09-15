@@ -3,21 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-import 'package:carvita/core/constants/app_colors.dart';
-import 'package:carvita/core/constants/app_routes.dart';
-import 'package:carvita/core/utils/calendar_day.dart';
-import 'package:carvita/data/models/predicted_maintenance.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/failures/app_failure_localizer.dart';
-import 'package:carvita/presentation/manager/locale_provider.dart';
-import 'package:carvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
-import 'package:carvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_state.dart';
-import 'package:carvita/presentation/navigation/app_route_arguments.dart';
-import 'package:carvita/presentation/screens/common_widgets/main_bottom_navigation_bar.dart';
+import 'package:petvita/core/constants/app_colors.dart';
+import 'package:petvita/core/constants/app_routes.dart';
+import 'package:petvita/core/utils/calendar_day.dart';
+import 'package:petvita/data/models/predicted_maintenance.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/failures/app_failure_localizer.dart';
+import 'package:petvita/presentation/manager/locale_provider.dart';
+import 'package:petvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
+import 'package:petvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_state.dart';
+import 'package:petvita/presentation/navigation/app_route_arguments.dart';
+import 'package:petvita/presentation/screens/common_widgets/main_bottom_navigation_bar.dart';
 
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_cubit.dart'; // For vehicle filter
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_state.dart'
+import 'package:petvita/presentation/manager/vehicle_list/pet_cubit.dart'; // For vehicle filter
+import 'package:petvita/presentation/manager/vehicle_list/pet_state.dart'
     as vehicle_list_state_import;
 
 class UpcomingMaintenanceListScreen extends StatefulWidget {
@@ -32,15 +32,15 @@ class _UpcomingMaintenanceListScreenState
     extends State<UpcomingMaintenanceListScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  Vehicle? _selectedVehicleFilter;
-  final Vehicle _allVehiclesSentinel = Vehicle(
+  Pet? _selectedVehicleFilter;
+  final Pet _allVehiclesSentinel = Pet(
     id: -999,
     name: "All vehicles",
     mileage: 0,
     mileageLastUpdated: DateTime(0),
     boughtDate: DateTime(0),
   );
-  List<Vehicle> _allVehicles = [];
+  List<Pet> _allVehicles = [];
 
   @override
   void initState() {
@@ -48,11 +48,11 @@ class _UpcomingMaintenanceListScreenState
     _tabController = TabController(length: 3, vsync: this);
 
     // Get vehicles for filter
-    final vehicleState = context.read<VehicleCubit>().state;
-    if (vehicleState is vehicle_list_state_import.VehicleLoaded) {
+    final vehicleState = context.read<PetCubit>().state;
+    if (vehicleState is vehicle_list_state_import.PetLoaded) {
       _allVehicles = vehicleState.vehicles;
     } else {
-      context.read<VehicleCubit>().fetchVehicles(); // If not loaded
+      context.read<PetCubit>().fetchVehicles(); // If not loaded
     }
   }
 
@@ -134,12 +134,12 @@ class _UpcomingMaintenanceListScreenState
         ), // Back button color
         automaticallyImplyLeading: false,
         actions: [
-          BlocBuilder<VehicleCubit, vehicle_list_state_import.VehicleState>(
+          BlocBuilder<PetCubit, vehicle_list_state_import.PetState>(
             builder: (context, vehicleState) {
-              if (vehicleState is vehicle_list_state_import.VehicleLoaded) {
+              if (vehicleState is vehicle_list_state_import.PetLoaded) {
                 _allVehicles = vehicleState.vehicles;
               }
-              return PopupMenuButton<Vehicle?>(
+              return PopupMenuButton<Pet?>(
                 icon: Icon(
                   Icons.filter_list,
                   color: Theme.of(
@@ -147,7 +147,7 @@ class _UpcomingMaintenanceListScreenState
                   ).colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
                 tooltip: AppLocalizations.of(context)!.filterByVehicle,
-                onSelected: (Vehicle? vehicle) {
+                onSelected: (Pet? vehicle) {
                   setState(() {
                     if (vehicle != null &&
                         vehicle.id == _allVehiclesSentinel.id) {
@@ -158,16 +158,16 @@ class _UpcomingMaintenanceListScreenState
                   });
                 },
                 itemBuilder: (BuildContext context) {
-                  List<PopupMenuEntry<Vehicle?>> items = [];
+                  List<PopupMenuEntry<Pet?>> items = [];
                   items.add(
-                    PopupMenuItem<Vehicle?>(
+                    PopupMenuItem<Pet?>(
                       value: _allVehiclesSentinel,
                       child: Text(AppLocalizations.of(context)!.allVehicles),
                     ),
                   );
                   items.addAll(
-                    _allVehicles.map((Vehicle vehicle) {
-                      return PopupMenuItem<Vehicle?>(
+                    _allVehicles.map((Pet vehicle) {
+                      return PopupMenuItem<Pet?>(
                         value: vehicle,
                         child: Text(vehicle.name),
                       );

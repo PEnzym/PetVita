@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 
-import 'package:carvita/application/ports/reminder_schedule_port.dart';
+import 'package:petvita/application/ports/reminder_schedule_port.dart';
 
 class MethodChannelDeviceTimeZone implements DeviceTimeZonePort {
   const MethodChannelDeviceTimeZone();

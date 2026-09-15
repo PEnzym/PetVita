@@ -4,28 +4,28 @@ import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:carvita/core/constants/app_colors.dart';
-import 'package:carvita/core/constants/app_routes.dart';
-import 'package:carvita/core/services/preferences_service.dart';
-import 'package:carvita/core/services/quick_action_service.dart';
-import 'package:carvita/core/theme/app_theme.dart';
-import 'package:carvita/core/utils/calendar_day.dart';
-import 'package:carvita/core/widgets/gradient_background.dart';
-import 'package:carvita/data/models/predicted_maintenance.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/main.dart';
-import 'package:carvita/presentation/failures/app_failure_localizer.dart';
-import 'package:carvita/presentation/formatters/predicted_maintenance_localizer.dart';
-import 'package:carvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
-import 'package:carvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_state.dart';
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_cubit.dart';
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_state.dart';
-import 'package:carvita/presentation/navigation/main_navigation_controller.dart';
-import 'package:carvita/presentation/navigation/app_route_arguments.dart';
-import 'package:carvita/presentation/screens/common_widgets/main_bottom_navigation_bar.dart';
-import 'package:carvita/presentation/screens/dashboard/widgets/quick_action_button.dart';
-import 'package:carvita/presentation/screens/dashboard/widgets/vehicle_summary_card.dart';
+import 'package:petvita/core/constants/app_colors.dart';
+import 'package:petvita/core/constants/app_routes.dart';
+import 'package:petvita/core/services/preferences_service.dart';
+import 'package:petvita/core/services/quick_action_service.dart';
+import 'package:petvita/core/theme/app_theme.dart';
+import 'package:petvita/core/utils/calendar_day.dart';
+import 'package:petvita/core/widgets/gradient_background.dart';
+import 'package:petvita/data/models/predicted_maintenance.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/main.dart';
+import 'package:petvita/presentation/failures/app_failure_localizer.dart';
+import 'package:petvita/presentation/formatters/predicted_maintenance_localizer.dart';
+import 'package:petvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
+import 'package:petvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_state.dart';
+import 'package:petvita/presentation/manager/vehicle_list/pet_cubit.dart';
+import 'package:petvita/presentation/manager/vehicle_list/pet_state.dart';
+import 'package:petvita/presentation/navigation/main_navigation_controller.dart';
+import 'package:petvita/presentation/navigation/app_route_arguments.dart';
+import 'package:petvita/presentation/screens/common_widgets/main_bottom_navigation_bar.dart';
+import 'package:petvita/presentation/screens/dashboard/widgets/quick_action_button.dart';
+import 'package:petvita/presentation/screens/dashboard/widgets/vehicle_summary_card.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -250,7 +250,7 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   Widget _buildVehicleSummaryCardWithPrediction(
     BuildContext context,
-    Vehicle vehicle,
+    Pet vehicle,
     List<PredictedMaintenanceInfo> allPredictions,
   ) {
     final nextServiceForThisVehicle = allPredictions
@@ -266,7 +266,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     }
 
     return VehicleSummaryCard(
-      vehicle: vehicle,
+      pet: vehicle,
       nextMaintenanceInfo: nextMaintenanceDisplay,
       onTap: () {
         Navigator.pushNamed(
@@ -327,7 +327,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                           Navigator.pushNamed(
                             context,
                             AppRoutes.addVehicleRoute,
-                            arguments: const AddEditVehicleRouteArguments(),
+                            arguments: const AddEditPetRouteArguments(),
                           );
                         },
                       ),
@@ -386,15 +386,15 @@ class _DashboardScreenState extends State<DashboardScreen>
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  BlocBuilder<VehicleCubit, VehicleState>(
+                  BlocBuilder<PetCubit, PetState>(
                     builder: (context, state) {
-                      if (state is VehicleLoading) {
+                      if (state is PetLoading) {
                         return Center(
                           child: CircularProgressIndicator(
                             color: themeExtensions.textColorOnBackground,
                           ),
                         );
-                      } else if (state is VehicleLoaded) {
+                      } else if (state is PetLoaded) {
                         if (state.vehicles.isEmpty) {
                           return Padding(
                             padding: EdgeInsets.all(16.0),
@@ -421,7 +421,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                             );
                           },
                         );
-                      } else if (state is VehicleError) {
+                      } else if (state is PetError) {
                         return Center(
                           child: Text(
                             state.failure.toLocalizedMessage(

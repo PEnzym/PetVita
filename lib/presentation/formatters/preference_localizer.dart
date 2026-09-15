@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
-import 'package:carvita/core/services/preferences_service.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/core/services/preferences_service.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
 
 extension AppThemePreferenceLocalizer on AppThemePreference {
   String displayString(BuildContext context) {

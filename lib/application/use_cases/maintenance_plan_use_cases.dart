@@ -1,6 +1,6 @@
-import 'package:carvita/application/ports/maintenance_repository_port.dart';
-import 'package:carvita/application/ports/clock.dart';
-import 'package:carvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/application/ports/maintenance_repository_port.dart';
+import 'package:petvita/application/ports/clock.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
 
 final class MaintenancePlanUseCases {
   const MaintenancePlanUseCases(
@@ -19,7 +19,7 @@ final class MaintenancePlanUseCases {
     required int vehicleId,
     required MaintenancePlanItem item,
   }) {
-    _validateVehicle(vehicleId, item);
+    _validatePet(vehicleId, item);
     final now = _clock.now();
     return _repository.addPlanItem(
       item,
@@ -31,7 +31,7 @@ final class MaintenancePlanUseCases {
     required int vehicleId,
     required MaintenancePlanItem item,
   }) {
-    _validateVehicle(vehicleId, item);
+    _validatePet(vehicleId, item);
     return _repository.updatePlanItem(item);
   }
 
@@ -39,12 +39,12 @@ final class MaintenancePlanUseCases {
     return _repository.deletePlanItem(itemId);
   }
 
-  void _validateVehicle(int vehicleId, MaintenancePlanItem item) {
+  void _validatePet(int vehicleId, MaintenancePlanItem item) {
     if (item.vehicleId != vehicleId) {
       throw ArgumentError.value(
         item.vehicleId,
         'item.vehicleId',
-        'Vehicle does not match maintenance plan',
+        'Pet does not match maintenance plan',
       );
     }
   }

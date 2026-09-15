@@ -2,32 +2,32 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:carvita/application/ports/clock.dart';
-import 'package:carvita/application/use_cases/maintenance_plan_use_cases.dart';
-import 'package:carvita/application/use_cases/service_log_use_cases.dart';
-import 'package:carvita/application/use_cases/vehicle_use_cases.dart';
-import 'package:carvita/core/failures/app_failure.dart';
-import 'package:carvita/core/services/preferences_service.dart';
-import 'package:carvita/core/utils/operation_result.dart';
-import 'package:carvita/data/models/maintenance_plan_item.dart';
-import 'package:carvita/data/models/service_log_entry.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/data/repositories/maintenance_repository.dart';
-import 'package:carvita/data/repositories/vehicle_repository.dart';
-import 'package:carvita/presentation/manager/maintenance_plan/maintenance_plan_cubit.dart';
-import 'package:carvita/presentation/manager/maintenance_plan/maintenance_plan_state.dart';
-import 'package:carvita/presentation/manager/service_log/service_log_cubit.dart';
-import 'package:carvita/presentation/manager/service_log/service_log_state.dart';
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_cubit.dart';
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_state.dart';
+import 'package:petvita/application/ports/clock.dart';
+import 'package:petvita/application/use_cases/maintenance_plan_use_cases.dart';
+import 'package:petvita/application/use_cases/service_log_use_cases.dart';
+import 'package:petvita/application/use_cases/pet_use_cases.dart';
+import 'package:petvita/core/failures/app_failure.dart';
+import 'package:petvita/core/services/preferences_service.dart';
+import 'package:petvita/core/utils/operation_result.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/data/repositories/maintenance_repository.dart';
+import 'package:petvita/data/repositories/pet_repository.dart';
+import 'package:petvita/presentation/manager/maintenance_plan/maintenance_plan_cubit.dart';
+import 'package:petvita/presentation/manager/maintenance_plan/maintenance_plan_state.dart';
+import 'package:petvita/presentation/manager/service_log/service_log_cubit.dart';
+import 'package:petvita/presentation/manager/service_log/service_log_state.dart';
+import 'package:petvita/presentation/manager/vehicle_list/pet_cubit.dart';
+import 'package:petvita/presentation/manager/vehicle_list/pet_state.dart';
 
 void main() {
-  group('VehicleCubit write protocol', () {
+  group('PetCubit write protocol', () {
     test('waits for refresh before returning success', () async {
-      final repository = _FakeVehicleRepository([_vehicle(id: 1)]);
+      final repository = _FakePetRepository([_vehicle(id: 1)]);
       final cubit = _vehicleCubit(repository);
       await cubit.fetchVehicles();
-      final emitted = <VehicleState>[];
+      final emitted = <PetState>[];
       final subscription = cubit.stream.listen(emitted.add);
 
       final result = await cubit.addVehicle(_vehicle(id: 2));
@@ -36,20 +36,20 @@ void main() {
       expect(result, isA<OperationSuccess>());
       expect(repository.events, ['getVehicles', 'addVehicle', 'getVehicles']);
       expect(emitted, [
-        VehicleLoaded([_vehicle(id: 1)], isRefreshing: true),
-        VehicleLoaded([_vehicle(id: 1), _vehicle(id: 2)]),
+        PetLoaded([_vehicle(id: 1)], isRefreshing: true),
+        PetLoaded([_vehicle(id: 1), _vehicle(id: 2)]),
       ]);
       await subscription.cancel();
       await cubit.close();
     });
 
     test('write failure keeps the last successful data', () async {
-      final repository = _FakeVehicleRepository([_vehicle(id: 1)])
+      final repository = _FakePetRepository([_vehicle(id: 1)])
         ..writeError = StateError('write failed');
       final cubit = _vehicleCubit(repository);
       await cubit.fetchVehicles();
       final before = cubit.state;
-      final emitted = <VehicleState>[];
+      final emitted = <PetState>[];
       final subscription = cubit.stream.listen(emitted.add);
 
       final result = await cubit.updateVehicle(_vehicle(id: 1));
@@ -65,7 +65,7 @@ void main() {
     test(
       'refresh failure reports a follow-up failure and keeps old data',
       () async {
-        final repository = _FakeVehicleRepository([_vehicle(id: 1)]);
+        final repository = _FakePetRepository([_vehicle(id: 1)]);
         final cubit = _vehicleCubit(repository);
         await cubit.fetchVehicles();
         repository.readError = StateError('refresh failed');
@@ -76,7 +76,7 @@ void main() {
         final followUpFailure = (result as OperationSuccess).followUpFailure;
         expect(followUpFailure, isA<OperationFailure>());
         expect(followUpFailure!.failure.kind, AppFailureKind.refresh);
-        final state = cubit.state as VehicleLoaded;
+        final state = cubit.state as PetLoaded;
         expect(state.vehicles, [_vehicle(id: 1)]);
         expect(state.refreshFailure?.kind, AppFailureKind.refresh);
         await cubit.close();
@@ -220,7 +220,7 @@ void main() {
       'initial reads expose load failures without diagnostic strings',
       () async {
         final vehicleCubit = _vehicleCubit(
-          _FakeVehicleRepository(const [])
+          _FakePetRepository(const [])
             ..readError = StateError('vehicle SQL path'),
         );
         final maintenanceRepository = _FakeMaintenanceRepository()
@@ -238,7 +238,7 @@ void main() {
           AppFailureKind.load,
         );
         expect(
-          (vehicleCubit.state as VehicleError).failure.kind,
+          (vehicleCubit.state as PetError).failure.kind,
           AppFailureKind.load,
         );
         expect(
@@ -266,7 +266,7 @@ void main() {
 
     test('delete commands expose delete failures', () async {
       final vehicleCubit = _vehicleCubit(
-        _FakeVehicleRepository([_vehicle(id: 1)])
+        _FakePetRepository([_vehicle(id: 1)])
           ..writeError = StateError('vehicle delete failed'),
       );
       final maintenanceRepository =
@@ -340,8 +340,8 @@ void main() {
   });
 }
 
-VehicleCubit _vehicleCubit(VehicleRepository repository) {
-  return VehicleCubit(VehicleUseCases(repository, PreferencesService()));
+PetCubit _vehicleCubit(PetRepository repository) {
+  return PetCubit(PetUseCases(repository, PreferencesService()));
 }
 
 MaintenancePlanCubit _maintenancePlanCubit(MaintenanceRepository repository) {
@@ -358,8 +358,8 @@ ServiceLogCubit _serviceLogCubit(MaintenanceRepository repository) {
   return ServiceLogCubit(ServiceLogUseCases(repository), 1);
 }
 
-Vehicle _vehicle({required int id}) {
-  return Vehicle(
+Pet _vehicle({required int id}) {
+  return Pet(
     id: id,
     name: 'Vehicle $id',
     mileage: 1000,
@@ -400,31 +400,31 @@ ServiceLogWithItems _serviceLog({required int id}) {
   );
 }
 
-class _FakeVehicleRepository extends VehicleRepository {
-  _FakeVehicleRepository(List<Vehicle> vehicles)
-    : vehicles = List<Vehicle>.of(vehicles);
+class _FakePetRepository extends PetRepository {
+  _FakePetRepository(List<Pet> vehicles)
+    : vehicles = List<Pet>.of(vehicles);
 
   final List<String> events = [];
-  final List<Vehicle> vehicles;
+  final List<Pet> vehicles;
   Object? readError;
   Object? writeError;
 
   @override
-  Future<List<Vehicle>> getVehicles() async {
+  Future<List<Pet>> getVehicles() async {
     events.add('getVehicles');
     if (readError case final error?) throw error;
-    return List<Vehicle>.of(vehicles);
+    return List<Pet>.of(vehicles);
   }
 
   @override
-  Future<void> addVehicle(Vehicle vehicle) async {
+  Future<void> addVehicle(Pet vehicle) async {
     events.add('addVehicle');
     if (writeError case final error?) throw error;
     vehicles.add(vehicle);
   }
 
   @override
-  Future<void> updateVehicle(Vehicle vehicle) async {
+  Future<void> updateVehicle(Pet vehicle) async {
     events.add('updateVehicle');
     if (writeError case final error?) throw error;
     final index = vehicles.indexWhere((current) => current.id == vehicle.id);

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:carvita/application/ports/app_startup_port.dart';
+import 'package:petvita/application/ports/app_startup_port.dart';
 
 typedef AppStartupOperation = FutureOr<void> Function();
 

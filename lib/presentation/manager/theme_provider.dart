@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:carvita/core/services/preferences_service.dart';
+import 'package:petvita/core/services/preferences_service.dart';
 
 class ThemeProvider extends ChangeNotifier {
   final PreferencesService _preferencesService;

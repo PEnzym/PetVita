@@ -1,5 +1,5 @@
-import 'package:carvita/application/ports/notification_permission_port.dart';
-import 'package:carvita/application/ports/preferences_ports.dart';
+import 'package:petvita/application/ports/notification_permission_port.dart';
+import 'package:petvita/application/ports/preferences_ports.dart';
 
 final class ReconcileNotificationPermission {
   ReconcileNotificationPermission(this._preferences, this._notifications);

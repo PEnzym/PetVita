@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:carvita/application/ports/app_startup_port.dart';
-import 'package:carvita/core/services/app_startup_service.dart';
+import 'package:petvita/application/ports/app_startup_port.dart';
+import 'package:petvita/core/services/app_startup_service.dart';
 
 void main() {
   test('continues after a recoverable operation failure', () async {

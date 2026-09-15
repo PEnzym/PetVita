@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
-import 'package:carvita/core/utils/calendar_day.dart';
+import 'package:petvita/core/utils/calendar_day.dart';
 
 void main() {
   setUpAll(tz_data.initializeTimeZones);

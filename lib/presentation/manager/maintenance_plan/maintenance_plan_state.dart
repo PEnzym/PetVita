@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
-import 'package:carvita/core/failures/app_failure.dart';
-import 'package:carvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/core/failures/app_failure.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
 
 abstract class MaintenancePlanState extends Equatable {
   const MaintenancePlanState();

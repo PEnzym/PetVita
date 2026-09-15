@@ -1,5 +1,5 @@
-import 'package:carvita/application/ports/maintenance_repository_port.dart';
-import 'package:carvita/data/models/service_log_entry.dart';
+import 'package:petvita/application/ports/maintenance_repository_port.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
 
 final class ServiceLogUseCases {
   const ServiceLogUseCases(this._repository);

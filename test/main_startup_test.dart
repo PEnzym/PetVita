@@ -8,26 +8,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:carvita/application/ports/app_startup_port.dart';
-import 'package:carvita/application/ports/clock.dart';
-import 'package:carvita/application/ports/notification_permission_port.dart';
-import 'package:carvita/application/ports/notification_tap_port.dart';
-import 'package:carvita/application/ports/reminder_schedule_port.dart';
-import 'package:carvita/application/queries/maintenance_data_snapshot.dart';
-import 'package:carvita/application/use_cases/load_upcoming_maintenance.dart';
-import 'package:carvita/application/use_cases/reconcile_notification_permission.dart';
-import 'package:carvita/application/use_cases/synchronize_maintenance_reminders.dart';
-import 'package:carvita/core/services/notification_coordinator.dart';
-import 'package:carvita/core/services/notification_service.dart';
-import 'package:carvita/core/services/prediction_service.dart';
-import 'package:carvita/core/services/preferences_service.dart';
-import 'package:carvita/core/services/quick_action_service.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/data/repositories/maintenance_repository.dart';
-import 'package:carvita/data/repositories/vehicle_repository.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/main.dart';
-import 'package:carvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
+import 'package:petvita/application/ports/app_startup_port.dart';
+import 'package:petvita/application/ports/clock.dart';
+import 'package:petvita/application/ports/notification_permission_port.dart';
+import 'package:petvita/application/ports/notification_tap_port.dart';
+import 'package:petvita/application/ports/reminder_schedule_port.dart';
+import 'package:petvita/application/queries/maintenance_data_snapshot.dart';
+import 'package:petvita/application/use_cases/load_upcoming_maintenance.dart';
+import 'package:petvita/application/use_cases/reconcile_notification_permission.dart';
+import 'package:petvita/application/use_cases/synchronize_maintenance_reminders.dart';
+import 'package:petvita/core/services/notification_coordinator.dart';
+import 'package:petvita/core/services/notification_service.dart';
+import 'package:petvita/core/services/prediction_service.dart';
+import 'package:petvita/core/services/preferences_service.dart';
+import 'package:petvita/core/services/quick_action_service.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/data/repositories/maintenance_repository.dart';
+import 'package:petvita/data/repositories/pet_repository.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/main.dart';
+import 'package:petvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
 
 void main() {
   setUp(() {
@@ -37,7 +37,7 @@ void main() {
   testWidgets('localized startup loads predictions and shortcuts once', (
     tester,
   ) async {
-    final vehicleRepository = _CountingVehicleRepository();
+    final vehicleRepository = _CountingPetRepository();
     final maintenanceRepository = _FakeMaintenanceRepository();
     final preferences = _FakePreferencesService();
     final platform = _CountingQuickActionPlatform();
@@ -97,7 +97,7 @@ void main() {
   testWidgets('shortcut update failure does not skip startup predictions', (
     tester,
   ) async {
-    final vehicleRepository = _CountingVehicleRepository();
+    final vehicleRepository = _CountingPetRepository();
     final maintenanceRepository = _FakeMaintenanceRepository();
     final preferences = _FakePreferencesService();
     final platform = _CountingQuickActionPlatform(failSetItems: true);
@@ -155,7 +155,7 @@ void main() {
   testWidgets('resume reloads once when calendar context changed', (
     tester,
   ) async {
-    final vehicleRepository = _CountingVehicleRepository();
+    final vehicleRepository = _CountingPetRepository();
     final maintenanceRepository = _FakeMaintenanceRepository();
     final preferences = _FakePreferencesService();
     final reminderSchedule = _FixedReminderSchedule();
@@ -277,7 +277,7 @@ void main() {
   testWidgets('resolved locale changes refresh shortcuts and reminders', (
     tester,
   ) async {
-    final vehicleRepository = _CountingVehicleRepository();
+    final vehicleRepository = _CountingPetRepository();
     final maintenanceRepository = _FakeMaintenanceRepository();
     final preferences = _FakePreferencesService();
     final platform = _CountingQuickActionPlatform();
@@ -345,7 +345,7 @@ void main() {
   testWidgets(
     'recoverable startup failure does not block the first frame or predictions',
     (tester) async {
-      final vehicleRepository = _CountingVehicleRepository();
+      final vehicleRepository = _CountingPetRepository();
       final maintenanceRepository = _FakeMaintenanceRepository();
       final preferences = _FakePreferencesService();
       final startupGate = Completer<void>();
@@ -420,7 +420,7 @@ Future<UpcomingMaintenanceCubit> _pumpPermissionReconciliationApp(
 ) async {
   final reminderSchedule = _FixedReminderSchedule();
   final quickActionService = QuickActionService(
-    vehicleRepository: _CountingVehicleRepository(),
+    vehicleRepository: _CountingPetRepository(),
     preferencesService: preferences,
     navigation: const _NoopQuickActionNavigation(),
     platform: _CountingQuickActionPlatform(),
@@ -485,11 +485,11 @@ UpcomingMaintenanceCubit _upcomingCubit(
   );
 }
 
-class _CountingVehicleRepository extends VehicleRepository {
+class _CountingPetRepository extends PetRepository {
   int readCount = 0;
 
   @override
-  Future<List<Vehicle>> getVehicles() async {
+  Future<List<Pet>> getVehicles() async {
     readCount++;
     return const [];
   }
@@ -589,7 +589,7 @@ class _NoopQuickActionNavigation implements QuickActionNavigation {
   void openUpcomingMaintenance() {}
 
   @override
-  void openVehicleSelection(List<Vehicle> vehicles) {}
+  void openVehicleSelection(List<Pet> vehicles) {}
 
   @override
   void showNoVehicleMessage() {}

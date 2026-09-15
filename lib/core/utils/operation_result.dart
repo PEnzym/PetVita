@@ -1,4 +1,4 @@
-import 'package:carvita/core/failures/app_failure.dart';
+import 'package:petvita/core/failures/app_failure.dart';
 
 sealed class OperationResult {
   const OperationResult();

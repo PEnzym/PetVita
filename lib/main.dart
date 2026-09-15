@@ -6,46 +6,46 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl_standalone.dart';
 import 'package:provider/provider.dart';
 
-import 'package:carvita/application/ports/app_startup_port.dart';
-import 'package:carvita/application/ports/clock.dart';
-import 'package:carvita/application/ports/notification_permission_port.dart';
-import 'package:carvita/application/ports/notification_tap_port.dart';
-import 'package:carvita/application/ports/platform_ports.dart';
-import 'package:carvita/application/ports/reminder_schedule_port.dart';
-import 'package:carvita/application/use_cases/load_upcoming_maintenance.dart';
-import 'package:carvita/application/use_cases/maintenance_plan_use_cases.dart';
-import 'package:carvita/application/use_cases/reconcile_notification_permission.dart';
-import 'package:carvita/application/use_cases/service_log_use_cases.dart';
-import 'package:carvita/application/use_cases/synchronize_maintenance_reminders.dart';
-import 'package:carvita/application/use_cases/vehicle_use_cases.dart';
-import 'package:carvita/core/constants/app_colors.dart';
-import 'package:carvita/core/constants/app_routes.dart';
-import 'package:carvita/core/services/app_startup_service.dart';
-import 'package:carvita/core/services/backup_service.dart';
-import 'package:carvita/core/services/device_time_zone_service.dart';
-import 'package:carvita/core/services/maintenance_reminder_tap_service.dart';
-import 'package:carvita/core/services/navigation_service.dart';
-import 'package:carvita/core/services/notification_coordinator.dart';
-import 'package:carvita/core/services/notification_service.dart';
-import 'package:carvita/core/services/plugin_platform_service.dart';
-import 'package:carvita/core/services/prediction_service.dart';
-import 'package:carvita/core/services/preferences_service.dart';
-import 'package:carvita/core/services/quick_action_service.dart';
-import 'package:carvita/core/services/reminder_schedule_service.dart';
-import 'package:carvita/core/theme/app_theme.dart';
-import 'package:carvita/data/repositories/maintenance_repository.dart';
-import 'package:carvita/data/repositories/vehicle_repository.dart';
-import 'package:carvita/data/sources/local/database_helper.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/manager/locale_provider.dart';
-import 'package:carvita/presentation/manager/theme_provider.dart';
-import 'package:carvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_cubit.dart';
-import 'package:carvita/presentation/images/vehicle_image_cache.dart';
-import 'package:carvita/presentation/navigation/app_router.dart';
-import 'package:carvita/presentation/navigation/default_maintenance_reminder_navigation.dart';
-import 'package:carvita/presentation/navigation/default_quick_action_navigation.dart';
-import 'package:carvita/presentation/navigation/main_navigation_controller.dart';
+import 'package:petvita/application/ports/app_startup_port.dart';
+import 'package:petvita/application/ports/clock.dart';
+import 'package:petvita/application/ports/notification_permission_port.dart';
+import 'package:petvita/application/ports/notification_tap_port.dart';
+import 'package:petvita/application/ports/platform_ports.dart';
+import 'package:petvita/application/ports/reminder_schedule_port.dart';
+import 'package:petvita/application/use_cases/load_upcoming_maintenance.dart';
+import 'package:petvita/application/use_cases/maintenance_plan_use_cases.dart';
+import 'package:petvita/application/use_cases/reconcile_notification_permission.dart';
+import 'package:petvita/application/use_cases/service_log_use_cases.dart';
+import 'package:petvita/application/use_cases/synchronize_maintenance_reminders.dart';
+import 'package:petvita/application/use_cases/pet_use_cases.dart';
+import 'package:petvita/core/constants/app_colors.dart';
+import 'package:petvita/core/constants/app_routes.dart';
+import 'package:petvita/core/services/app_startup_service.dart';
+import 'package:petvita/core/services/backup_service.dart';
+import 'package:petvita/core/services/device_time_zone_service.dart';
+import 'package:petvita/core/services/maintenance_reminder_tap_service.dart';
+import 'package:petvita/core/services/navigation_service.dart';
+import 'package:petvita/core/services/notification_coordinator.dart';
+import 'package:petvita/core/services/notification_service.dart';
+import 'package:petvita/core/services/plugin_platform_service.dart';
+import 'package:petvita/core/services/prediction_service.dart';
+import 'package:petvita/core/services/preferences_service.dart';
+import 'package:petvita/core/services/quick_action_service.dart';
+import 'package:petvita/core/services/reminder_schedule_service.dart';
+import 'package:petvita/core/theme/app_theme.dart';
+import 'package:petvita/data/repositories/maintenance_repository.dart';
+import 'package:petvita/data/repositories/pet_repository.dart';
+import 'package:petvita/data/sources/local/database_helper.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/manager/locale_provider.dart';
+import 'package:petvita/presentation/manager/theme_provider.dart';
+import 'package:petvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
+import 'package:petvita/presentation/manager/vehicle_list/pet_cubit.dart';
+import 'package:petvita/presentation/images/pet_image_cache.dart';
+import 'package:petvita/presentation/navigation/app_router.dart';
+import 'package:petvita/presentation/navigation/default_maintenance_reminder_navigation.dart';
+import 'package:petvita/presentation/navigation/default_quick_action_navigation.dart';
+import 'package:petvita/presentation/navigation/main_navigation_controller.dart';
 
 final RouteObserver<ModalRoute<void>> routeObserver =
     RouteObserver<ModalRoute<void>>();
@@ -76,14 +76,14 @@ Future<void> main() async {
   const clock = SystemClock();
   final preferencesService = PreferencesService();
   final databaseHelper = DatabaseHelper();
-  final vehicleRepository = VehicleRepository(dbHelper: databaseHelper);
+  final vehicleRepository = PetRepository(dbHelper: databaseHelper);
   final maintenanceRepository = MaintenanceRepository(dbHelper: databaseHelper);
   final predictionService = PredictionService(clock);
-  final vehicleUseCases = VehicleUseCases(
+  final vehicleUseCases = PetUseCases(
     vehicleRepository,
     preferencesService,
   );
-  final vehicleImageCache = VehicleImageCache(vehicleUseCases);
+  final vehicleImageCache = PetImageCache(vehicleUseCases);
   final maintenancePlanUseCases = MaintenancePlanUseCases(
     maintenanceRepository,
     clock,
@@ -155,8 +155,8 @@ Future<void> main() async {
         Provider<NotificationTapPort>.value(value: maintenanceReminderTaps),
         Provider<ReminderSchedulePort>.value(value: reminderSchedule),
         Provider<PreferencesService>.value(value: preferencesService),
-        Provider<VehicleUseCases>.value(value: vehicleUseCases),
-        Provider<VehicleImageCache>.value(value: vehicleImageCache),
+        Provider<PetUseCases>.value(value: vehicleUseCases),
+        Provider<PetImageCache>.value(value: vehicleImageCache),
         Provider<MaintenancePlanUseCases>.value(value: maintenancePlanUseCases),
         Provider<ServiceLogUseCases>.value(value: serviceLogUseCases),
         Provider<NotificationPermissionGateway>.value(
@@ -179,7 +179,7 @@ Future<void> main() async {
           create: (_) => ThemeProvider(preferencesService),
         ),
       ],
-      child: CarVitaApp(
+      child: PetVitaApp(
         preferencesService: preferencesService,
         vehicleUseCases: vehicleUseCases,
         loadUpcomingMaintenance: loadUpcomingMaintenance,
@@ -189,12 +189,12 @@ Future<void> main() async {
   );
 }
 
-class CarVitaApp extends StatelessWidget {
+class PetVitaApp extends StatelessWidget {
   final PreferencesService preferencesService;
-  final VehicleUseCases vehicleUseCases;
+  final PetUseCases vehicleUseCases;
   final LoadUpcomingMaintenance loadUpcomingMaintenance;
   final SynchronizeMaintenanceReminders synchronizeMaintenanceReminders;
-  const CarVitaApp({
+  const PetVitaApp({
     super.key,
     required this.preferencesService,
     required this.vehicleUseCases,
@@ -206,8 +206,8 @@ class CarVitaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<VehicleCubit>(
-          create: (context) => VehicleCubit(vehicleUseCases)..fetchVehicles(),
+        BlocProvider<PetCubit>(
+          create: (context) => PetCubit(vehicleUseCases)..fetchVehicles(),
         ),
         BlocProvider<UpcomingMaintenanceCubit>(
           create: (context) => UpcomingMaintenanceCubit(
@@ -251,7 +251,7 @@ class CarVitaApp extends StatelessWidget {
             Brightness.dark,
           );
           return MaterialApp(
-            title: "CarVita",
+            title: "PetVita",
             theme: lightThemeData,
             darkTheme: darkThemeData,
             themeMode: themeProvider.themeMode,

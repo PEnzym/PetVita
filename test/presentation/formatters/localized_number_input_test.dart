@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:carvita/presentation/formatters/localized_number_input.dart';
+import 'package:petvita/presentation/formatters/localized_number_input.dart';
 
 void main() {
   test('parses locale digits and decimal separators', () {

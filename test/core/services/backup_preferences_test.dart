@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:carvita/core/services/preferences_service.dart';
+import 'package:petvita/core/services/preferences_service.dart';
 
 void main() {
   test('backup preferences use a typed allowlist', () async {

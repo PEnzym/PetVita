@@ -12,10 +12,10 @@
 </p>
 
 <p align="center">
-  <img src="./assets/icon/icon.png" width="120" title="CarVita">
+  <img src="./assets/icon/icon.png" width="120" title="PetVita">
 </p>
 
-<h1 align="center">CarVita</h1>
+<h1 align="center">PetVita</h1>
 <h3 align="center">Personal assistant for managing and predicting your vehicle's maintenance needs.</h3>
 
 ![](./.design/assets/feature_graphic/output/en/gh-header_image.jpg)
@@ -26,7 +26,7 @@
   <a href="./.design/i18n/README_zh.md">中文</a>
 </p>
 
-## What CarVita do?
+## What PetVita do?
 
 ✅ **Visualize Your Vehicle's Status:** A clear dashboard provides an at-a-glance overview of your vehicles and the most urgent upcoming services.
 

@@ -9,24 +9,24 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:carvita/application/use_cases/maintenance_plan_use_cases.dart';
-import 'package:carvita/application/use_cases/service_log_use_cases.dart';
-import 'package:carvita/application/use_cases/vehicle_use_cases.dart';
-import 'package:carvita/core/services/preferences_service.dart';
-import 'package:carvita/core/theme/app_theme.dart';
-import 'package:carvita/data/models/maintenance_plan_item.dart';
-import 'package:carvita/data/models/service_log_entry.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/data/repositories/maintenance_repository.dart';
-import 'package:carvita/data/repositories/vehicle_repository.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/manager/locale_provider.dart';
-import 'package:carvita/presentation/manager/maintenance_plan/maintenance_plan_cubit.dart';
-import 'package:carvita/presentation/manager/service_log/service_log_cubit.dart';
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_cubit.dart';
-import 'package:carvita/presentation/screens/maintenance/add_edit_maintenance_plan_item_screen.dart';
-import 'package:carvita/presentation/screens/maintenance/log_maintenance_screen.dart';
-import 'package:carvita/presentation/screens/vehicle/add_edit_vehicle_screen.dart';
+import 'package:petvita/application/use_cases/maintenance_plan_use_cases.dart';
+import 'package:petvita/application/use_cases/service_log_use_cases.dart';
+import 'package:petvita/application/use_cases/pet_use_cases.dart';
+import 'package:petvita/core/services/preferences_service.dart';
+import 'package:petvita/core/theme/app_theme.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/data/repositories/maintenance_repository.dart';
+import 'package:petvita/data/repositories/pet_repository.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/manager/locale_provider.dart';
+import 'package:petvita/presentation/manager/maintenance_plan/maintenance_plan_cubit.dart';
+import 'package:petvita/presentation/manager/service_log/service_log_cubit.dart';
+import 'package:petvita/presentation/manager/vehicle_list/pet_cubit.dart';
+import 'package:petvita/presentation/screens/maintenance/add_edit_maintenance_plan_item_screen.dart';
+import 'package:petvita/presentation/screens/maintenance/log_maintenance_screen.dart';
+import 'package:petvita/presentation/screens/vehicle/add_edit_vehicle_screen.dart';
 
 void main() {
   setUp(() {
@@ -36,15 +36,15 @@ void main() {
   testWidgets('vehicle form ignores a second submit while saving', (
     tester,
   ) async {
-    final repository = _BlockingVehicleRepository();
-    final cubit = VehicleCubit(
-      VehicleUseCases(repository, PreferencesService()),
+    final repository = _BlockingPetRepository();
+    final cubit = PetCubit(
+      PetUseCases(repository, PreferencesService()),
     );
 
     await tester.pumpWidget(
       _testApp(
-        providers: [BlocProvider<VehicleCubit>.value(value: cubit)],
-        child: AddEditVehicleScreen(vehicle: _vehicle()),
+        providers: [BlocProvider<PetCubit>.value(value: cubit)],
+        child:         AddEditVehicleScreen(pet: _vehicle()),
       ),
     );
     await tester.pumpAndSettle();
@@ -181,15 +181,15 @@ void main() {
       );
     }
 
-    final vehicleCubit = VehicleCubit(
-      VehicleUseCases(_BlockingVehicleRepository(), PreferencesService()),
+    final vehicleCubit = PetCubit(
+      PetUseCases(_BlockingPetRepository(), PreferencesService()),
     );
 
     await tester.pumpWidget(
       _testApp(
         systemPadding: systemPadding,
-        providers: [BlocProvider<VehicleCubit>.value(value: vehicleCubit)],
-        child: AddEditVehicleScreen(vehicle: _vehicle()),
+        providers: [BlocProvider<PetCubit>.value(value: vehicleCubit)],
+        child: AddEditVehicleScreen(pet: _vehicle()),
       ),
     );
     await tester.pumpAndSettle();
@@ -317,16 +317,16 @@ void main() {
   testWidgets('vehicle write failure keeps input and re-enables submit', (
     tester,
   ) async {
-    final repository = _BlockingVehicleRepository()
+    final repository = _BlockingPetRepository()
       ..writeError = StateError('write failed');
-    final cubit = VehicleCubit(
-      VehicleUseCases(repository, PreferencesService()),
+    final cubit = PetCubit(
+      PetUseCases(repository, PreferencesService()),
     );
 
     await tester.pumpWidget(
       _testApp(
-        providers: [BlocProvider<VehicleCubit>.value(value: cubit)],
-        child: AddEditVehicleScreen(vehicle: _vehicle()),
+        providers: [BlocProvider<PetCubit>.value(value: cubit)],
+        child: AddEditVehicleScreen(pet: _vehicle()),
       ),
     );
     await tester.pumpAndSettle();
@@ -351,33 +351,30 @@ void main() {
     await cubit.close();
   });
 
-  testWidgets('vehicle form normalizes locale digits before saving', (
+  testWidgets('pet form saves the breed field', (
     tester,
   ) async {
-    final repository = _BlockingVehicleRepository();
-    final cubit = VehicleCubit(
-      VehicleUseCases(repository, PreferencesService()),
+    final repository = _BlockingPetRepository();
+    final cubit = PetCubit(
+      PetUseCases(repository, PreferencesService()),
     );
 
     await tester.pumpWidget(
       _testApp(
         locale: const Locale('ar'),
-        providers: [BlocProvider<VehicleCubit>.value(value: cubit)],
-        child: AddEditVehicleScreen(vehicle: _vehicle()),
+        providers: [BlocProvider<PetCubit>.value(value: cubit)],
+        child: AddEditVehicleScreen(pet: _vehicle()),
       ),
     );
     await tester.pumpAndSettle();
 
-    await tester.enterText(
-      find.byKey(const ValueKey('vehicle-mileage-field')),
-      '١٢٣٫٤',
-    );
+    await tester.enterText(find.byType(TextFormField).at(1), 'Golden Retriever');
     final submit = find.byType(ElevatedButton).last;
     await tester.ensureVisible(submit);
     await tester.tap(submit);
     await tester.pump();
 
-    expect(repository.lastUpdatedVehicle?.mileage, 123.4);
+    expect(repository.lastUpdatedVehicle?.breed, 'Golden Retriever');
 
     await tester.pumpWidget(const SizedBox());
     await cubit.close();
@@ -385,44 +382,44 @@ void main() {
     await tester.pump();
   });
 
-  testWidgets('vehicle plate field follows the entered script direction', (
+  testWidgets('pet breed field follows the entered script direction', (
     tester,
   ) async {
-    final cubit = VehicleCubit(
-      VehicleUseCases(_BlockingVehicleRepository(), PreferencesService()),
+    final cubit = PetCubit(
+      PetUseCases(_BlockingPetRepository(), PreferencesService()),
     );
 
     await tester.pumpWidget(
       _testApp(
-        providers: [BlocProvider<VehicleCubit>.value(value: cubit)],
-        child: AddEditVehicleScreen(vehicle: _vehicle()),
+        providers: [BlocProvider<PetCubit>.value(value: cubit)],
+        child: AddEditVehicleScreen(pet: _vehicle()),
       ),
     );
     await tester.pumpAndSettle();
 
-    final plateField = find.byKey(const ValueKey('vehicle-plate-number-field'));
-    final plateEditableText = find.descendant(
-      of: plateField,
+    final breedField = find.byType(TextFormField).at(1);
+    final breedEditableText = find.descendant(
+      of: breedField,
       matching: find.byType(EditableText),
     );
     expect(
-      tester.widget<EditableText>(plateEditableText).textDirection,
+      tester.widget<EditableText>(breedEditableText).textDirection,
       TextDirection.ltr,
     );
 
-    await tester.enterText(plateField, '۱۲ ۳۴۵ الف ۶۷');
+    await tester.enterText(breedField, '۱۲ ۳۴۵ الف ۶۷');
     await tester.pump();
 
     expect(
-      tester.widget<EditableText>(plateEditableText).textDirection,
+      tester.widget<EditableText>(breedEditableText).textDirection,
       TextDirection.rtl,
     );
 
-    await tester.enterText(plateField, 'ABC 123');
+    await tester.enterText(breedField, 'ABC 123');
     await tester.pump();
 
     expect(
-      tester.widget<EditableText>(plateEditableText).textDirection,
+      tester.widget<EditableText>(breedEditableText).textDirection,
       TextDirection.ltr,
     );
 
@@ -430,25 +427,25 @@ void main() {
     await cubit.close();
   });
 
-  testWidgets('purchase and completed service pickers stop at today', (
+  testWidgets('birth date picker stops at today', (
     tester,
   ) async {
     final futureDate = DateTime.now().add(const Duration(days: 1));
-    final vehicleRepository = _BlockingVehicleRepository();
-    final vehicleCubit = VehicleCubit(
-      VehicleUseCases(vehicleRepository, PreferencesService()),
+    final vehicleRepository = _BlockingPetRepository();
+    final vehicleCubit = PetCubit(
+      PetUseCases(vehicleRepository, PreferencesService()),
     );
 
     await tester.pumpWidget(
       _testApp(
-        providers: [BlocProvider<VehicleCubit>.value(value: vehicleCubit)],
+        providers: [BlocProvider<PetCubit>.value(value: vehicleCubit)],
         child: AddEditVehicleScreen(
-          vehicle: _vehicle().copyWith(boughtDate: futureDate),
+          pet: _vehicle().copyWith(boughtDate: futureDate),
         ),
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('vehicle-bought-date-field')));
+    await tester.tap(find.byKey(const ValueKey('pet-birth-date-field')));
     await tester.pumpAndSettle();
 
     var picker = tester.widget<DatePickerDialog>(find.byType(DatePickerDialog));
@@ -591,15 +588,15 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    final cubit = VehicleCubit(
-      VehicleUseCases(_BlockingVehicleRepository(), PreferencesService()),
+    final cubit = PetCubit(
+      PetUseCases(_BlockingPetRepository(), PreferencesService()),
     );
 
     await tester.pumpWidget(
       _testApp(
         textScaler: const TextScaler.linear(2),
-        providers: [BlocProvider<VehicleCubit>.value(value: cubit)],
-        child: AddEditVehicleScreen(vehicle: _vehicle()),
+        providers: [BlocProvider<PetCubit>.value(value: cubit)],
+        child: AddEditVehicleScreen(pet: _vehicle()),
       ),
     );
     await tester.pumpAndSettle();
@@ -627,8 +624,8 @@ Widget _testApp({
   );
   return MultiProvider(
     providers: [
-      Provider<VehicleUseCases>.value(
-        value: VehicleUseCases(VehicleRepository(), preferences),
+      Provider<PetUseCases>.value(
+        value: PetUseCases(PetRepository(), preferences),
       ),
       ChangeNotifierProvider<LocaleProvider>(
         create: (_) => LocaleProvider(preferences),
@@ -661,8 +658,8 @@ Widget _testApp({
   );
 }
 
-Vehicle _vehicle() {
-  return Vehicle(
+Pet _vehicle() {
+  return Pet(
     id: 1,
     name: 'Vehicle',
     mileage: 1000,
@@ -720,14 +717,14 @@ ServiceLogWithItems _serviceLogWithUnavailablePlanItem() {
   );
 }
 
-class _BlockingVehicleRepository extends VehicleRepository {
+class _BlockingPetRepository extends PetRepository {
   final Completer<void> updateCompleter = Completer<void>();
   int updateCount = 0;
   Object? writeError;
-  Vehicle? lastUpdatedVehicle;
+  Pet? lastUpdatedVehicle;
 
   @override
-  Future<void> updateVehicle(Vehicle vehicle) async {
+  Future<void> updateVehicle(Pet vehicle) async {
     updateCount++;
     lastUpdatedVehicle = vehicle;
     if (writeError case final error?) throw error;
@@ -735,7 +732,7 @@ class _BlockingVehicleRepository extends VehicleRepository {
   }
 
   @override
-  Future<List<Vehicle>> getVehicles() async => [_vehicle()];
+  Future<List<Pet>> getVehicles() async => [_vehicle()];
 }
 
 class _BlockingMaintenanceRepository extends MaintenanceRepository {

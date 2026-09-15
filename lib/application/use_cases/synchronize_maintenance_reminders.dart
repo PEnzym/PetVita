@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:carvita/application/ports/clock.dart';
-import 'package:carvita/application/ports/notification_replacement_port.dart';
-import 'package:carvita/application/ports/preferences_ports.dart';
-import 'package:carvita/application/ports/reminder_schedule_port.dart';
-import 'package:carvita/application/reminders/maintenance_reminder_payload.dart';
-import 'package:carvita/data/models/predicted_maintenance.dart';
+import 'package:petvita/application/ports/clock.dart';
+import 'package:petvita/application/ports/notification_replacement_port.dart';
+import 'package:petvita/application/ports/preferences_ports.dart';
+import 'package:petvita/application/ports/reminder_schedule_port.dart';
+import 'package:petvita/application/reminders/maintenance_reminder_payload.dart';
+import 'package:petvita/data/models/predicted_maintenance.dart';
 
 typedef ReminderContentBuilder =
     ReminderContent Function(PredictedMaintenanceInfo prediction);

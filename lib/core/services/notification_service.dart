@@ -3,9 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 
-import 'package:carvita/application/ports/clock.dart';
-import 'package:carvita/application/ports/notification_permission_port.dart';
-import 'package:carvita/application/ports/notification_tap_port.dart';
+import 'package:petvita/application/ports/clock.dart';
+import 'package:petvita/application/ports/notification_permission_port.dart';
+import 'package:petvita/application/ports/notification_tap_port.dart';
 
 typedef NotificationPayloadCallback = void Function(String? payload);
 
@@ -196,8 +196,8 @@ class PluginLocalNotificationsPlatform implements LocalNotificationsPlatform {
       const NotificationDetails(
         android: AndroidNotificationDetails(
           'carvita_channel_id',
-          'CarVita Reminders',
-          channelDescription: 'Channel for CarVita maintenance reminders.',
+          'PetVita Reminders',
+          channelDescription: 'Channel for PetVita maintenance reminders.',
           importance: Importance.max,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',

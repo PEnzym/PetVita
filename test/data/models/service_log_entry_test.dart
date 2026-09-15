@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:carvita/data/models/service_log_entry.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
 
 void main() {
   group('ServiceLogPerformedItem.fromJoinedMap', () {

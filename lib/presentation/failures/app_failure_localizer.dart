@@ -1,5 +1,5 @@
-import 'package:carvita/core/failures/app_failure.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/core/failures/app_failure.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
 
 extension AppFailureLocalizer on AppFailure {
   String toLocalizedMessage(AppLocalizations l10n) {

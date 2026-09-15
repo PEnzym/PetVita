@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
-import 'package:carvita/core/failures/app_failure.dart';
-import 'package:carvita/data/models/service_log_entry.dart';
+import 'package:petvita/core/failures/app_failure.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
 
 abstract class ServiceLogState extends Equatable {
   const ServiceLogState();

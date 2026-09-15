@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import 'package:carvita/presentation/navigation/main_navigation_controller.dart';
-import 'package:carvita/presentation/screens/dashboard/dashboard_screen.dart';
-import 'package:carvita/presentation/screens/maintenance/upcoming_maintenance_list_screen.dart';
-import 'package:carvita/presentation/screens/settings/settings_screen.dart';
-import 'package:carvita/presentation/screens/vehicle/vehicle_list_screen.dart';
+import 'package:petvita/presentation/navigation/main_navigation_controller.dart';
+import 'package:petvita/presentation/screens/dashboard/dashboard_screen.dart';
+import 'package:petvita/presentation/screens/maintenance/upcoming_maintenance_list_screen.dart';
+import 'package:petvita/presentation/screens/settings/settings_screen.dart';
+import 'package:petvita/presentation/screens/vehicle/vehicle_list_screen.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key, this.initialIndex = 0, this.tabs})

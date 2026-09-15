@@ -2,14 +2,14 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:carvita/application/ports/maintenance_repository_port.dart';
-import 'package:carvita/application/ports/vehicle_repository_port.dart';
-import 'package:carvita/application/reminders/maintenance_reminder_payload.dart';
-import 'package:carvita/core/services/maintenance_reminder_tap_service.dart';
-import 'package:carvita/data/models/maintenance_plan_item.dart';
-import 'package:carvita/data/models/service_log_entry.dart';
-import 'package:carvita/data/models/service_log_performed_item_link.dart';
-import 'package:carvita/data/models/vehicle.dart';
+import 'package:petvita/application/ports/maintenance_repository_port.dart';
+import 'package:petvita/application/ports/pet_repository_port.dart';
+import 'package:petvita/application/reminders/maintenance_reminder_payload.dart';
+import 'package:petvita/core/services/maintenance_reminder_tap_service.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
+import 'package:petvita/data/models/service_log_performed_item_link.dart';
+import 'package:petvita/data/models/pet.dart';
 
 void main() {
   final payload = MaintenanceReminderPayload(
@@ -69,7 +69,7 @@ void main() {
     final navigation = _FakeNavigation()..ready = true;
     final service = _service(
       navigation: navigation,
-      vehicleRepository: _FakeVehicleRepository(vehicleExists: false),
+      vehicleRepository: _FakePetRepository(vehicleExists: false),
     );
 
     service.enqueuePayload(payload.encode());
@@ -105,7 +105,7 @@ void main() {
 
   test('malformed and malicious payloads are ignored', () async {
     final navigation = _FakeNavigation()..ready = true;
-    final vehicles = _FakeVehicleRepository();
+    final vehicles = _FakePetRepository();
     final service = _service(
       navigation: navigation,
       vehicleRepository: vehicles,
@@ -124,7 +124,7 @@ void main() {
 
   test('a transient validation failure can be retried safely', () async {
     final navigation = _FakeNavigation()..ready = true;
-    final vehicles = _FakeVehicleRepository()..failNextRead = true;
+    final vehicles = _FakePetRepository()..failNextRead = true;
     final service = _service(
       navigation: navigation,
       vehicleRepository: vehicles,
@@ -145,18 +145,18 @@ final _scheduledAt = DateTime.utc(2030, 1, 2, 12);
 
 MaintenanceReminderTapService _service({
   required _FakeNavigation navigation,
-  _FakeVehicleRepository? vehicleRepository,
+  _FakePetRepository? vehicleRepository,
   _FakeMaintenanceRepository? maintenanceRepository,
 }) {
   return MaintenanceReminderTapService(
-    vehicleRepository ?? _FakeVehicleRepository(),
+    vehicleRepository ?? _FakePetRepository(),
     maintenanceRepository ?? _FakeMaintenanceRepository(),
     navigation,
   );
 }
 
-Vehicle _vehicle() {
-  return Vehicle(
+Pet _vehicle() {
+  return Pet(
     id: 1,
     name: 'Vehicle',
     mileage: 1000,
@@ -183,16 +183,16 @@ class _FakeNavigation implements MaintenanceReminderNavigation {
   }
 }
 
-class _FakeVehicleRepository implements VehicleRepositoryPort {
-  _FakeVehicleRepository({bool vehicleExists = true})
+class _FakePetRepository implements PetRepositoryPort {
+  _FakePetRepository({bool vehicleExists = true})
     : vehicle = vehicleExists ? _vehicle() : null;
 
-  final Vehicle? vehicle;
+  final Pet? vehicle;
   bool failNextRead = false;
   int readCount = 0;
 
   @override
-  Future<Vehicle?> getVehicleById(int id) async {
+  Future<Pet?> getVehicleById(int id) async {
     readCount++;
     if (failNextRead) {
       failNextRead = false;
@@ -205,16 +205,16 @@ class _FakeVehicleRepository implements VehicleRepositoryPort {
   Future<Uint8List?> getVehicleImage(int id) async => vehicle?.image;
 
   @override
-  Future<List<Vehicle>> getVehicles() async => [if (vehicle != null) vehicle!];
+  Future<List<Pet>> getVehicles() async => [if (vehicle != null) vehicle!];
 
   @override
-  Future<void> addVehicle(Vehicle vehicle) async {}
+  Future<void> addVehicle(Pet vehicle) async {}
 
   @override
   Future<void> deleteVehicle(int id) async {}
 
   @override
-  Future<void> updateVehicle(Vehicle vehicle) async {}
+  Future<void> updateVehicle(Pet vehicle) async {}
 }
 
 class _FakeMaintenanceRepository implements MaintenanceRepositoryPort {

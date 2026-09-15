@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
 
-import 'package:carvita/core/constants/app_colors.dart';
-import 'package:carvita/core/utils/calendar_day.dart';
-import 'package:carvita/data/models/predicted_maintenance.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/core/constants/app_colors.dart';
+import 'package:petvita/core/utils/calendar_day.dart';
+import 'package:petvita/data/models/predicted_maintenance.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
 
 class MaintenanceListItemCard extends StatelessWidget {
   final String title;

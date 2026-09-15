@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:carvita/core/services/preferences_service.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/main.dart';
+import 'package:petvita/core/services/preferences_service.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/main.dart';
 
 class LocaleProvider extends ChangeNotifier {
   final PreferencesService _preferencesService;

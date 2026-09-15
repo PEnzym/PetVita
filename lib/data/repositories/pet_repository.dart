@@ -1,22 +1,22 @@
 import 'dart:typed_data';
 
-import 'package:carvita/application/ports/vehicle_repository_port.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/data/sources/local/database_helper.dart';
+import 'package:petvita/application/ports/pet_repository_port.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/data/sources/local/database_helper.dart';
 
-class VehicleRepository implements VehicleRepositoryPort {
+class PetRepository implements PetRepositoryPort {
   final DatabaseHelper _dbHelper;
 
-  VehicleRepository({DatabaseHelper? dbHelper})
+  PetRepository({DatabaseHelper? dbHelper})
     : _dbHelper = dbHelper ?? DatabaseHelper();
 
   @override
-  Future<List<Vehicle>> getVehicles() async {
+  Future<List<Pet>> getVehicles() async {
     return await _dbHelper.getAllVehicles();
   }
 
   @override
-  Future<Vehicle?> getVehicleById(int id) async {
+  Future<Pet?> getVehicleById(int id) async {
     return await _dbHelper.getVehicleById(id);
   }
 
@@ -26,12 +26,12 @@ class VehicleRepository implements VehicleRepositoryPort {
   }
 
   @override
-  Future<void> addVehicle(Vehicle vehicle) async {
+  Future<void> addVehicle(Pet vehicle) async {
     await _dbHelper.insertVehicle(vehicle);
   }
 
   @override
-  Future<void> updateVehicle(Vehicle vehicle) async {
+  Future<void> updateVehicle(Pet vehicle) async {
     await _dbHelper.updateVehicle(vehicle);
   }
 

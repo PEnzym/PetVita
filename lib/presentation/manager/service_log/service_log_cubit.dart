@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:carvita/application/use_cases/service_log_use_cases.dart';
-import 'package:carvita/core/failures/app_failure.dart';
-import 'package:carvita/core/utils/operation_result.dart';
-import 'package:carvita/data/models/service_log_entry.dart';
+import 'package:petvita/application/use_cases/service_log_use_cases.dart';
+import 'package:petvita/core/failures/app_failure.dart';
+import 'package:petvita/core/utils/operation_result.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
 import 'service_log_state.dart';
 
 class ServiceLogCubit extends Cubit<ServiceLogState> {

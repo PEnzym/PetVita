@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:developer' as developer;
 
-import 'package:carvita/application/ports/maintenance_repository_port.dart';
-import 'package:carvita/application/ports/notification_tap_port.dart';
-import 'package:carvita/application/ports/vehicle_repository_port.dart';
-import 'package:carvita/application/reminders/maintenance_reminder_payload.dart';
+import 'package:petvita/application/ports/maintenance_repository_port.dart';
+import 'package:petvita/application/ports/notification_tap_port.dart';
+import 'package:petvita/application/ports/pet_repository_port.dart';
+import 'package:petvita/application/reminders/maintenance_reminder_payload.dart';
 
 abstract interface class MaintenanceReminderNavigation {
   bool get isReady;
@@ -24,7 +24,7 @@ class MaintenanceReminderTapService implements NotificationTapPort {
 
   static const int _maximumConsumedKeys = 64;
 
-  final VehicleRepositoryPort _vehicleRepository;
+  final PetRepositoryPort _vehicleRepository;
   final MaintenanceRepositoryPort _maintenanceRepository;
   final MaintenanceReminderNavigation _navigation;
   final Queue<MaintenanceReminderPayload> _pendingPayloads =

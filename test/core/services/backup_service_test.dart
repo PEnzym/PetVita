@@ -9,11 +9,11 @@ import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:carvita/application/ports/backup_preferences_port.dart';
-import 'package:carvita/core/services/backup_service.dart';
-import 'package:carvita/core/services/preferences_service.dart';
-import 'package:carvita/data/sources/local/database_helper.dart';
-import 'package:carvita/data/sources/local/database_schema.dart';
+import 'package:petvita/application/ports/backup_preferences_port.dart';
+import 'package:petvita/core/services/backup_service.dart';
+import 'package:petvita/core/services/preferences_service.dart';
+import 'package:petvita/data/sources/local/database_helper.dart';
+import 'package:petvita/data/sources/local/database_schema.dart';
 
 void main() {
   sqfliteFfiInit();
@@ -60,7 +60,7 @@ void main() {
     );
 
     final database = await controller.open();
-    await _insertVehicle(database, name: 'Current vehicle');
+    await _insertPet(database, name: 'Current vehicle');
   });
 
   tearDown(() async {
@@ -98,7 +98,7 @@ void main() {
 
       final liveDatabase = await controller.open();
       await liveDatabase.update(
-        'vehicles',
+        'pets',
         {'name': 'Changed after export'},
         where: 'name = ?',
         whereArgs: ['Current vehicle'],
@@ -213,7 +213,7 @@ void main() {
     final packagePath = await backupService.createExportSnapshot();
     final liveDatabase = await controller.open();
     await liveDatabase.update(
-      'vehicles',
+      'pets',
       {'name': 'Keep after failed restore'},
       where: 'name = ?',
       whereArgs: ['Current vehicle'],
@@ -334,7 +334,7 @@ void main() {
         onCreate: _createLegacySchemaWithoutForeignKeys,
       ),
     );
-    await _insertVehicle(candidate, name: 'Unconstrained vehicle');
+    await _insertPet(candidate, name: 'Unconstrained vehicle');
     await candidate.close();
     final closeCountBeforeRestore = controller.closeCount;
 
@@ -482,7 +482,7 @@ void main() {
         (await restored.rawQuery('PRAGMA user_version')).single.values.single,
         DatabaseSchema.currentVersion,
       );
-      expect(await restored.query('vehicles'), hasLength(1));
+      expect(await restored.query('pets'), hasLength(1));
       expect(await restored.query('maintenance_plan_items'), hasLength(9));
       expect(await restored.rawQuery('PRAGMA foreign_key_check'), isEmpty);
       await _expectPreferencesUnchanged();
@@ -661,7 +661,7 @@ Future<void> _createCandidateDatabase(
       onUpgrade: DatabaseSchema.upgrade,
     ),
   );
-  await _insertVehicle(database, name: vehicleName);
+  await _insertPet(database, name: vehicleName);
   await database.close();
 }
 
@@ -720,8 +720,8 @@ Future<void> _createLegacySchemaWithoutForeignKeys(
   ''');
 }
 
-Future<void> _insertVehicle(Database database, {required String name}) async {
-  await database.insert('vehicles', {
+Future<void> _insertPet(Database database, {required String name}) async {
+  await database.insert('pets', {
     'name': name,
     'mileage': 1234.0,
     'mileage_last_updated': '2026-07-26T00:00:00.000',
@@ -730,7 +730,7 @@ Future<void> _insertVehicle(Database database, {required String name}) async {
 }
 
 Future<List<String>> _vehicleNames(Database database) async {
-  final rows = await database.query('vehicles', orderBy: 'id');
+  final rows = await database.query('pets', orderBy: 'id');
   return rows.map((row) => row['name']! as String).toList(growable: false);
 }
 

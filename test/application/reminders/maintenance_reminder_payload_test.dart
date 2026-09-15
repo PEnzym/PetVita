@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:carvita/application/reminders/maintenance_reminder_payload.dart';
+import 'package:petvita/application/reminders/maintenance_reminder_payload.dart';
 
 void main() {
   test('versioned payload round-trips required identifiers', () {

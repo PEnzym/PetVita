@@ -4,9 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:timezone/timezone.dart' as tz;
 
-import 'package:carvita/application/ports/clock.dart';
-import 'package:carvita/application/ports/reminder_schedule_port.dart';
-import 'package:carvita/core/services/reminder_schedule_service.dart';
+import 'package:petvita/application/ports/clock.dart';
+import 'package:petvita/application/ports/reminder_schedule_port.dart';
+import 'package:petvita/core/services/reminder_schedule_service.dart';
 
 void main() {
   test('schedules the requested calendar day at local noon', () async {

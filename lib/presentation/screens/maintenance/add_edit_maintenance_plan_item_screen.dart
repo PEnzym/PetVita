@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:carvita/core/constants/app_colors.dart';
-import 'package:carvita/core/theme/app_theme.dart';
-import 'package:carvita/core/utils/operation_result.dart';
-import 'package:carvita/core/widgets/gradient_background.dart';
-import 'package:carvita/data/models/maintenance_plan_item.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/failures/app_failure_localizer.dart';
-import 'package:carvita/presentation/formatters/localized_number_input.dart';
-import 'package:carvita/presentation/manager/locale_provider.dart';
-import 'package:carvita/presentation/manager/maintenance_plan/maintenance_plan_cubit.dart';
-import 'package:carvita/presentation/manager/service_log/service_log_cubit.dart';
-import 'package:carvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
+import 'package:petvita/core/constants/app_colors.dart';
+import 'package:petvita/core/theme/app_theme.dart';
+import 'package:petvita/core/utils/operation_result.dart';
+import 'package:petvita/core/widgets/gradient_background.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/failures/app_failure_localizer.dart';
+import 'package:petvita/presentation/formatters/localized_number_input.dart';
+import 'package:petvita/presentation/manager/locale_provider.dart';
+import 'package:petvita/presentation/manager/maintenance_plan/maintenance_plan_cubit.dart';
+import 'package:petvita/presentation/manager/service_log/service_log_cubit.dart';
+import 'package:petvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
 
 class AddEditMaintenancePlanItemScreen extends StatefulWidget {
   final int vehicleId;

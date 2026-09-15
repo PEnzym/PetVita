@@ -4,26 +4,24 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 
-import 'package:carvita/application/ports/platform_ports.dart';
-import 'package:carvita/core/constants/app_colors.dart';
-import 'package:carvita/core/theme/app_theme.dart';
-import 'package:carvita/core/utils/calendar_day.dart';
-import 'package:carvita/core/utils/operation_result.dart';
-import 'package:carvita/core/widgets/gradient_background.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/failures/app_failure_localizer.dart';
-import 'package:carvita/presentation/formatters/bidi_text_direction.dart';
-import 'package:carvita/presentation/images/vehicle_image_cache.dart';
-import 'package:carvita/presentation/formatters/localized_number_input.dart';
-import 'package:carvita/presentation/manager/locale_provider.dart';
-import 'package:carvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_cubit.dart';
+import 'package:petvita/application/ports/platform_ports.dart';
+import 'package:petvita/core/constants/app_colors.dart';
+import 'package:petvita/core/theme/app_theme.dart';
+import 'package:petvita/core/utils/calendar_day.dart';
+import 'package:petvita/core/utils/operation_result.dart';
+import 'package:petvita/core/widgets/gradient_background.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/failures/app_failure_localizer.dart';
+import 'package:petvita/presentation/formatters/bidi_text_direction.dart';
+import 'package:petvita/presentation/images/pet_image_cache.dart';
+import 'package:petvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
+import 'package:petvita/presentation/manager/vehicle_list/pet_cubit.dart';
 
 class AddEditVehicleScreen extends StatefulWidget {
-  final Vehicle? vehicle;
+  final Pet? pet;
 
-  const AddEditVehicleScreen({super.key, this.vehicle});
+  const AddEditVehicleScreen({super.key, this.pet});
 
   @override
   State<AddEditVehicleScreen> createState() => _AddEditVehicleScreenState();
@@ -32,43 +30,31 @@ class AddEditVehicleScreen extends StatefulWidget {
 class _AddEditVehicleScreenState extends State<AddEditVehicleScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
-  late TextEditingController _mileageController;
-  late TextEditingController _boughtDateController;
-  late TextEditingController _modelController;
-  late TextEditingController _plateNumberController;
-  late TextEditingController _vinController;
-  late TextEditingController _engineNumberController;
+  late TextEditingController _breedController;
+  late TextEditingController _birthDateController;
 
   Uint8List? _selectedImageBytes;
   bool _imageLoaded = true;
   bool _imageWasChanged = false;
-  DateTime? _selectedBoughtDate;
+  DateTime? _selectedBirthDate;
   bool _isSubmitting = false;
 
-  bool get _isEditing => widget.vehicle != null;
+  bool get _isEditing => widget.pet != null;
 
   @override
   void initState() {
     super.initState();
-    final v = widget.vehicle;
+    final v = widget.pet;
     _nameController = TextEditingController(text: v?.name ?? '');
-    _mileageController = TextEditingController(
-      text: v?.mileage.toString() ?? '',
-    );
-    _selectedBoughtDate = v == null
+    _selectedBirthDate = v?.birthDate == null
         ? null
-        : CalendarDay.clampToToday(v.boughtDate);
-    _boughtDateController = TextEditingController(
-      text: _selectedBoughtDate == null
+        : CalendarDay.clampToToday(v!.birthDate!);
+    _birthDateController = TextEditingController(
+      text: _selectedBirthDate == null
           ? ''
-          : DateFormat.yMMMd().format(_selectedBoughtDate!),
+          : DateFormat.yMMMd().format(_selectedBirthDate!),
     );
-    _modelController = TextEditingController(text: v?.model ?? '');
-    _plateNumberController = TextEditingController(text: v?.plateNumber ?? '');
-    _vinController = TextEditingController(text: v?.vin ?? '');
-    _engineNumberController = TextEditingController(
-      text: v?.engineNumber ?? '',
-    );
+    _breedController = TextEditingController(text: v?.breed ?? '');
     _selectedImageBytes = v?.image;
     _imageLoaded = v?.imageLoaded ?? true;
     if (v != null && !_imageLoaded && v.id != null) {
@@ -76,9 +62,9 @@ class _AddEditVehicleScreenState extends State<AddEditVehicleScreen> {
     }
   }
 
-  Future<void> _loadExistingImage(int vehicleId) async {
+  Future<void> _loadExistingImage(int petId) async {
     try {
-      final bytes = await context.read<VehicleImageCache>().load(vehicleId);
+      final bytes = await context.read<PetImageCache>().load(petId);
       if (!mounted || _imageWasChanged) return;
       setState(() {
         _selectedImageBytes = bytes;
@@ -92,12 +78,8 @@ class _AddEditVehicleScreenState extends State<AddEditVehicleScreen> {
   @override
   void dispose() {
     _nameController.dispose();
-    _mileageController.dispose();
-    _boughtDateController.dispose();
-    _modelController.dispose();
-    _plateNumberController.dispose();
-    _vinController.dispose();
-    _engineNumberController.dispose();
+    _breedController.dispose();
+    _birthDateController.dispose();
     super.dispose();
   }
 
@@ -182,12 +164,12 @@ class _AddEditVehicleScreenState extends State<AddEditVehicleScreen> {
     );
   }
 
-  Future<void> _selectBoughtDate(BuildContext context) async {
+  Future<void> _selectBirthDate(BuildContext context) async {
     final today = CalendarDay.dateOnly(DateTime.now());
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: CalendarDay.clampToToday(
-        _selectedBoughtDate ?? today,
+        _selectedBirthDate ?? today,
         today: today,
       ),
       firstDate: DateTime(1950),
@@ -195,10 +177,10 @@ class _AddEditVehicleScreenState extends State<AddEditVehicleScreen> {
       builder: (_, child) => child!,
     );
     if (!context.mounted) return;
-    if (picked != null && picked != _selectedBoughtDate) {
+    if (picked != null && picked != _selectedBirthDate) {
       setState(() {
-        _selectedBoughtDate = picked;
-        _boughtDateController.text = DateFormat.yMMMd(
+        _selectedBirthDate = picked;
+        _birthDateController.text = DateFormat.yMMMd(
           Localizations.localeOf(context).toLanguageTag(),
         ).format(picked);
       });
@@ -207,17 +189,18 @@ class _AddEditVehicleScreenState extends State<AddEditVehicleScreen> {
 
   void _submitForm() async {
     if (_isSubmitting) return;
-    final inputLocale = Localizations.localeOf(context);
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      if (_selectedBoughtDate == null) {
+      if (_selectedBirthDate == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               AppLocalizations.of(
                 context,
-              )!.invalidEmptyEntry(AppLocalizations.of(context)!.boughtDate),
+              )!.invalidEmptyEntry(
+                AppLocalizations.of(context)!.petBirthDate,
+              ),
               style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
             ),
             backgroundColor: AppColors.urgentReminderText,
@@ -226,43 +209,24 @@ class _AddEditVehicleScreenState extends State<AddEditVehicleScreen> {
         return;
       }
 
-      final mileageFilled =
-          LocalizedNumberInput.parseDouble(
-            _mileageController.text,
-            inputLocale,
-          ) ??
-          0;
-      var mileageLastUpdated = DateTime.now();
-      if (_isEditing && mileageFilled == widget.vehicle!.mileage) {
-        mileageLastUpdated = widget.vehicle!.mileageLastUpdated;
-      } else {}
-
-      final vehicleData = Vehicle(
-        id: widget.vehicle?.id,
+      final vehicleData = Pet(
+        id: widget.pet?.id,
         name: _nameController.text.trim(),
-        mileage: mileageFilled,
-        mileageLastUpdated: mileageLastUpdated,
-        boughtDate: _selectedBoughtDate!,
+        breed: _breedController.text.trim().isNotEmpty
+            ? _breedController.text.trim()
+            : null,
+        birthDate: _selectedBirthDate,
+        mileage: widget.pet?.mileage ?? 0,
+        mileageLastUpdated: widget.pet?.mileageLastUpdated ?? DateTime.now(),
+        boughtDate: widget.pet?.boughtDate ?? DateTime.now(),
         image: _selectedImageBytes,
         imageLoaded: _imageLoaded,
-        model: _modelController.text.trim().isNotEmpty
-            ? _modelController.text.trim()
-            : null,
-        plateNumber: _plateNumberController.text.trim().isNotEmpty
-            ? _plateNumberController.text.trim()
-            : null,
-        vin: _vinController.text.trim().isNotEmpty
-            ? _vinController.text.trim()
-            : null,
-        engineNumber: _engineNumberController.text.trim().isNotEmpty
-            ? _engineNumberController.text.trim()
-            : null,
       );
 
       setState(() {
         _isSubmitting = true;
       });
-      final cubit = context.read<VehicleCubit>();
+      final cubit = context.read<PetCubit>();
       final OperationResult result = _isEditing
           ? await cubit.updateVehicle(vehicleData)
           : await cubit.addVehicle(vehicleData);
@@ -292,12 +256,12 @@ class _AddEditVehicleScreenState extends State<AddEditVehicleScreen> {
         );
       }
 
-      final imageCache = context.read<VehicleImageCache>();
-      final vehicleId = widget.vehicle?.id;
-      if (vehicleId == null) {
+      final imageCache = context.read<PetImageCache>();
+      final petId = widget.pet?.id;
+      if (petId == null) {
         imageCache.clear();
       } else {
-        imageCache.invalidate(vehicleId);
+        imageCache.invalidate(petId);
       }
 
       await context.read<UpcomingMaintenanceCubit>().loadAllUpcomingMaintenance(
@@ -310,8 +274,6 @@ class _AddEditVehicleScreenState extends State<AddEditVehicleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final localeProvider = context.watch<LocaleProvider>();
-    final inputLocale = Localizations.localeOf(context);
     final themeExtensions = Theme.of(context).extension<AppThemeExtensions>()!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark
@@ -460,63 +422,30 @@ class _AddEditVehicleScreenState extends State<AddEditVehicleScreen> {
                   formField(
                     _nameController,
                     AppLocalizations.of(context)!.requiredFieldLabel(
-                      AppLocalizations.of(context)!.vehicleNickname,
+                      AppLocalizations.of(context)!.petName,
                     ),
-                    AppLocalizations.of(context)!.vehicleNicknameHint,
+                    null,
                     isRequired: true,
                     useNaturalTextDirection: true,
                   ),
                   formField(
-                    _mileageController,
-                    AppLocalizations.of(context)!.requiredFieldWithUnit(
-                      AppLocalizations.of(context)!.mileageLabelWithUnit(""),
-                      localeProvider.mileageUnit,
-                    ),
-                    null,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    isRequired: true,
-                    inputFormatters: [
-                      LocalizedNumberTextInputFormatter.decimal(inputLocale),
-                    ],
-                    fieldKey: const ValueKey('vehicle-mileage-field'),
-                    validator: (val) {
-                      if (val == null || val.isEmpty) {
-                        return AppLocalizations.of(context)!.invalidEmptyEntry(
-                          AppLocalizations.of(
-                            context,
-                          )!.mileageLabelWithUnit(""),
-                        );
-                      }
-                      final mileage = LocalizedNumberInput.parseDouble(
-                        val,
-                        inputLocale,
-                      );
-                      if (mileage == null || mileage < 0) {
-                        return AppLocalizations.of(
-                          context,
-                        )!.invalidOptionalEntry(
-                          AppLocalizations.of(
-                            context,
-                          )!.mileageLabelWithUnit(""),
-                        );
-                      }
-                      return null;
-                    },
+                    _breedController,
+                    AppLocalizations.of(context)!.petBreed,
+                    AppLocalizations.of(context)!.petBreedHint,
+                    useNaturalTextDirection: true,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 18.0),
                     child: TextFormField(
-                      key: const ValueKey('vehicle-bought-date-field'),
-                      controller: _boughtDateController,
+                      key: const ValueKey('pet-birth-date-field'),
+                      controller: _birthDateController,
                       style: TextStyle(
                         color: themeExtensions.textColorOnBackground,
                       ),
                       decoration: InputDecoration(
                         labelText: AppLocalizations.of(context)!
                             .requiredFieldLabel(
-                              AppLocalizations.of(context)!.boughtDate,
+                              AppLocalizations.of(context)!.petBirthDate,
                             ),
                         suffixIcon: Icon(
                           Icons.calendar_today,
@@ -524,45 +453,19 @@ class _AddEditVehicleScreenState extends State<AddEditVehicleScreen> {
                         ),
                       ),
                       readOnly: true,
-                      onTap: () => _selectBoughtDate(context),
+                      onTap: () => _selectBirthDate(context),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return AppLocalizations.of(
                             context,
                           )!.invalidEmptyEntry(
-                            AppLocalizations.of(context)!.boughtDate,
+                            AppLocalizations.of(context)!.petBirthDate,
                           );
                         }
                         return null;
                       },
                     ),
                   ),
-                  formField(
-                    _modelController,
-                    AppLocalizations.of(context)!.vehicleModel,
-                    AppLocalizations.of(context)!.vehicleModelHint,
-                    useNaturalTextDirection: true,
-                  ),
-                  formField(
-                    _plateNumberController,
-                    AppLocalizations.of(context)!.plateNumber,
-                    null,
-                    fieldKey: const ValueKey('vehicle-plate-number-field'),
-                    useNaturalTextDirection: true,
-                  ),
-                  formField(
-                    _vinController,
-                    AppLocalizations.of(context)!.vin,
-                    AppLocalizations.of(context)!.vinHint,
-                    useNaturalTextDirection: true,
-                  ),
-                  formField(
-                    _engineNumberController,
-                    AppLocalizations.of(context)!.engineNumber,
-                    null,
-                    useNaturalTextDirection: true,
-                  ),
-
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: _isSubmitting ? null : _submitForm,

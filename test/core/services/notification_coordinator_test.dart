@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:carvita/core/services/notification_coordinator.dart';
-import 'package:carvita/core/services/notification_service.dart';
+import 'package:petvita/core/services/notification_coordinator.dart';
+import 'package:petvita/core/services/notification_service.dart';
 
 void main() {
   test('maintenance notification ids are stable across app runs', () {

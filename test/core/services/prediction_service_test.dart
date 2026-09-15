@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:carvita/application/ports/clock.dart';
-import 'package:carvita/core/services/prediction_service.dart';
-import 'package:carvita/data/models/maintenance_plan_item.dart';
-import 'package:carvita/data/models/predicted_maintenance.dart';
-import 'package:carvita/data/models/service_log_entry.dart';
-import 'package:carvita/data/models/service_log_performed_item_link.dart';
-import 'package:carvita/data/models/vehicle.dart';
+import 'package:petvita/application/ports/clock.dart';
+import 'package:petvita/core/services/prediction_service.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/data/models/predicted_maintenance.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
+import 'package:petvita/data/models/service_log_performed_item_link.dart';
+import 'package:petvita/data/models/pet.dart';
 
 void main() {
   final service = PredictionService(_FixedClock(DateTime(2026, 7, 29)));
@@ -234,12 +234,12 @@ MaintenancePlanItem _plan({
   );
 }
 
-Vehicle _vehicle({
+Pet _vehicle({
   double mileage = 1000,
   DateTime? mileageLastUpdated,
   DateTime? boughtDate,
 }) {
-  return Vehicle(
+  return Pet(
     id: 1,
     name: 'Vehicle',
     mileage: mileage,

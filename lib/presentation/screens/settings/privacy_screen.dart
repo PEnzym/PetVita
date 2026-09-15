@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:carvita/core/theme/app_theme.dart';
-import 'package:carvita/core/widgets/gradient_background.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/core/theme/app_theme.dart';
+import 'package:petvita/core/widgets/gradient_background.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
 
 class PrivacyScreen extends StatelessWidget {
   const PrivacyScreen({super.key});

@@ -3,8 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:provider/provider.dart';
 
-import 'package:carvita/presentation/navigation/main_navigation_controller.dart';
-import 'package:carvita/presentation/navigation/main_shell.dart';
+import 'package:petvita/presentation/navigation/main_navigation_controller.dart';
+import 'package:petvita/presentation/navigation/main_shell.dart';
 
 void main() {
   testWidgets('tab switch preserves state and Android back returns home', (

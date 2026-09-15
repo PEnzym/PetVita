@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:carvita/application/use_cases/load_upcoming_maintenance.dart';
-import 'package:carvita/application/use_cases/synchronize_maintenance_reminders.dart';
-import 'package:carvita/core/failures/app_failure.dart';
-import 'package:carvita/data/models/predicted_maintenance.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/application/use_cases/load_upcoming_maintenance.dart';
+import 'package:petvita/application/use_cases/synchronize_maintenance_reminders.dart';
+import 'package:petvita/core/failures/app_failure.dart';
+import 'package:petvita/data/models/predicted_maintenance.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
 import 'upcoming_maintenance_state.dart';
 
 class UpcomingMaintenanceCubit extends Cubit<UpcomingMaintenanceState> {

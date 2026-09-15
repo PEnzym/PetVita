@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:carvita/core/theme/app_theme.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/screens/common_widgets/main_bottom_navigation_bar.dart';
-import 'package:carvita/presentation/screens/dashboard/widgets/quick_action_button.dart';
-import 'package:carvita/presentation/screens/dashboard/widgets/vehicle_summary_card.dart';
+import 'package:petvita/core/theme/app_theme.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/screens/common_widgets/main_bottom_navigation_bar.dart';
+import 'package:petvita/presentation/screens/dashboard/widgets/quick_action_button.dart';
+import 'package:petvita/presentation/screens/dashboard/widgets/vehicle_summary_card.dart';
 
 void main() {
   for (final textScale in [1.0, 1.3, 2.0]) {
@@ -46,7 +46,7 @@ void main() {
                       ],
                     ),
                     VehicleSummaryCard(
-                      vehicle: Vehicle(
+                      pet: Pet(
                         id: 1,
                         name: 'Familienfahrzeug mit langem Namen',
                         mileage: 1000,

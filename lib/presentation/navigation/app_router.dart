@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:carvita/core/constants/app_routes.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/navigation/app_route_arguments.dart';
-import 'package:carvita/presentation/screens/maintenance/add_edit_maintenance_plan_item_screen.dart';
-import 'package:carvita/presentation/screens/maintenance/log_maintenance_screen.dart';
-import 'package:carvita/presentation/navigation/main_shell.dart';
-import 'package:carvita/presentation/screens/settings/privacy_screen.dart';
-import 'package:carvita/presentation/screens/vehicle/add_edit_vehicle_screen.dart';
-import 'package:carvita/presentation/screens/vehicle/vehicle_details_screen.dart';
+import 'package:petvita/core/constants/app_routes.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/navigation/app_route_arguments.dart';
+import 'package:petvita/presentation/screens/maintenance/add_edit_maintenance_plan_item_screen.dart';
+import 'package:petvita/presentation/screens/maintenance/log_maintenance_screen.dart';
+import 'package:petvita/presentation/navigation/main_shell.dart';
+import 'package:petvita/presentation/screens/settings/privacy_screen.dart';
+import 'package:petvita/presentation/screens/vehicle/add_edit_vehicle_screen.dart';
+import 'package:petvita/presentation/screens/vehicle/vehicle_details_screen.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -42,13 +42,13 @@ class AppRouter {
         );
       case AppRoutes.addVehicleRoute:
         final arguments = settings.arguments;
-        if (arguments != null && arguments is! AddEditVehicleRouteArguments) {
+        if (arguments != null && arguments is! AddEditPetRouteArguments) {
           return _errorRoute(settings);
         }
         return MaterialPageRoute(
           settings: settings,
           builder: (_) => AddEditVehicleScreen(
-            vehicle: (arguments as AddEditVehicleRouteArguments?)?.vehicle,
+            pet: (arguments as AddEditPetRouteArguments?)?.pet,
           ),
         );
       case AppRoutes.vehicleDetailsRoute:

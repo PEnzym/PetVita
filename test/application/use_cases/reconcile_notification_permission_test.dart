@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:carvita/application/ports/notification_permission_port.dart';
-import 'package:carvita/application/ports/preferences_ports.dart';
-import 'package:carvita/application/use_cases/reconcile_notification_permission.dart';
+import 'package:petvita/application/ports/notification_permission_port.dart';
+import 'package:petvita/application/ports/preferences_ports.dart';
+import 'package:petvita/application/use_cases/reconcile_notification_permission.dart';
 
 void main() {
   test(

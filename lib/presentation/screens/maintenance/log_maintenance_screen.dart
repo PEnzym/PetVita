@@ -4,25 +4,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import 'package:carvita/application/use_cases/vehicle_use_cases.dart';
-import 'package:carvita/core/constants/app_colors.dart';
-import 'package:carvita/core/theme/app_theme.dart';
-import 'package:carvita/core/utils/calendar_day.dart';
-import 'package:carvita/core/utils/operation_result.dart';
-import 'package:carvita/core/widgets/gradient_background.dart';
-import 'package:carvita/data/models/maintenance_plan_item.dart';
-import 'package:carvita/data/models/service_log_entry.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/failures/app_failure_localizer.dart';
-import 'package:carvita/presentation/formatters/localized_number_input.dart';
-import 'package:carvita/presentation/manager/locale_provider.dart';
-import 'package:carvita/presentation/manager/maintenance_plan/maintenance_plan_cubit.dart';
-import 'package:carvita/presentation/manager/service_log/service_log_cubit.dart';
-import 'package:carvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_cubit.dart';
+import 'package:petvita/application/use_cases/pet_use_cases.dart';
+import 'package:petvita/core/constants/app_colors.dart';
+import 'package:petvita/core/theme/app_theme.dart';
+import 'package:petvita/core/utils/calendar_day.dart';
+import 'package:petvita/core/utils/operation_result.dart';
+import 'package:petvita/core/widgets/gradient_background.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/failures/app_failure_localizer.dart';
+import 'package:petvita/presentation/formatters/localized_number_input.dart';
+import 'package:petvita/presentation/manager/locale_provider.dart';
+import 'package:petvita/presentation/manager/maintenance_plan/maintenance_plan_cubit.dart';
+import 'package:petvita/presentation/manager/service_log/service_log_cubit.dart';
+import 'package:petvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
+import 'package:petvita/presentation/manager/vehicle_list/pet_cubit.dart';
 
-import 'package:carvita/presentation/manager/maintenance_plan/maintenance_plan_state.dart'
+import 'package:petvita/presentation/manager/maintenance_plan/maintenance_plan_state.dart'
     as plan_state;
 
 class LogMaintenanceScreen extends StatefulWidget {
@@ -43,7 +43,7 @@ class LogMaintenanceScreen extends StatefulWidget {
 
 class _LogMaintenanceScreenState extends State<LogMaintenanceScreen> {
   final _formKey = GlobalKey<FormState>();
-  late final VehicleUseCases _vehicleUseCases;
+  late final PetUseCases _vehicleUseCases;
 
   late TextEditingController _dateController;
   late TextEditingController _mileageController;
@@ -64,7 +64,7 @@ class _LogMaintenanceScreenState extends State<LogMaintenanceScreen> {
   @override
   void initState() {
     super.initState();
-    _vehicleUseCases = context.read<VehicleUseCases>();
+    _vehicleUseCases = context.read<PetUseCases>();
     final log = widget.logToEdit?.entry;
 
     _selectedServiceDate = CalendarDay.clampToToday(
@@ -241,7 +241,7 @@ class _LogMaintenanceScreenState extends State<LogMaintenanceScreen> {
           ),
         );
       }
-      Vehicle? currentVehicle = await _vehicleUseCases.getVehicleById(
+      Pet? currentVehicle = await _vehicleUseCases.getVehicleById(
         widget.vehicleId,
       );
       if (!mounted) return;
@@ -305,7 +305,7 @@ class _LogMaintenanceScreenState extends State<LogMaintenanceScreen> {
             mileage: newMileageAtService,
             mileageLastUpdated: _selectedServiceDate!,
           );
-          await context.read<VehicleCubit>().updateVehicle(updatedVehicle);
+          await context.read<PetCubit>().updateVehicle(updatedVehicle);
           if (!mounted) return;
         }
       }

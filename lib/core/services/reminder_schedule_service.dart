@@ -4,8 +4,8 @@ import 'dart:developer' as developer;
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
-import 'package:carvita/application/ports/clock.dart';
-import 'package:carvita/application/ports/reminder_schedule_port.dart';
+import 'package:petvita/application/ports/clock.dart';
+import 'package:petvita/application/ports/reminder_schedule_port.dart';
 
 class ReminderScheduleService implements ReminderSchedulePort {
   ReminderScheduleService(this._deviceTimeZone, this._clock);

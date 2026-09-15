@@ -5,9 +5,9 @@ import 'dart:developer' as developer;
 import 'package:collection/collection.dart';
 import 'package:quick_actions/quick_actions.dart';
 
-import 'package:carvita/application/ports/preferences_ports.dart';
-import 'package:carvita/application/ports/vehicle_repository_port.dart';
-import 'package:carvita/data/models/vehicle.dart';
+import 'package:petvita/application/ports/preferences_ports.dart';
+import 'package:petvita/application/ports/pet_repository_port.dart';
+import 'package:petvita/data/models/pet.dart';
 
 typedef ShortcutHandler = void Function(String shortcutType);
 
@@ -58,7 +58,7 @@ abstract interface class QuickActionNavigation {
     required String vehicleName,
   });
 
-  void openVehicleSelection(List<Vehicle> vehicles);
+  void openVehicleSelection(List<Pet> vehicles);
 
   void showNoVehicleMessage();
 }
@@ -67,7 +67,7 @@ class QuickActionService {
   static const String logMaintenanceAction = 'action_log';
   static const String upcomingMaintenanceAction = 'action_upcoming_list';
 
-  final VehicleRepositoryPort vehicleRepository;
+  final PetRepositoryPort vehicleRepository;
   final DefaultVehiclePreferences preferencesService;
   final QuickActionPlatform platform;
   final QuickActionNavigation navigation;
@@ -156,7 +156,7 @@ class QuickActionService {
   }
 
   Future<void> handleLogMaintenanceRequest() async {
-    final List<Vehicle> vehicles = await vehicleRepository.getVehicles();
+    final List<Pet> vehicles = await vehicleRepository.getVehicles();
     if (!navigation.isReady) return;
 
     if (vehicles.isEmpty) {

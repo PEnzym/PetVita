@@ -7,21 +7,21 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:carvita/application/use_cases/maintenance_plan_use_cases.dart';
-import 'package:carvita/application/use_cases/service_log_use_cases.dart';
-import 'package:carvita/core/services/navigation_service.dart';
-import 'package:carvita/core/services/preferences_service.dart';
-import 'package:carvita/core/services/quick_action_service.dart';
-import 'package:carvita/core/theme/app_theme.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/data/repositories/maintenance_repository.dart';
-import 'package:carvita/data/repositories/vehicle_repository.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/manager/locale_provider.dart';
-import 'package:carvita/presentation/navigation/default_quick_action_navigation.dart';
-import 'package:carvita/presentation/navigation/main_navigation_controller.dart';
-import 'package:carvita/presentation/navigation/main_shell.dart';
-import 'package:carvita/presentation/screens/vehicle/select_vehicle_screen.dart';
+import 'package:petvita/application/use_cases/maintenance_plan_use_cases.dart';
+import 'package:petvita/application/use_cases/service_log_use_cases.dart';
+import 'package:petvita/core/services/navigation_service.dart';
+import 'package:petvita/core/services/preferences_service.dart';
+import 'package:petvita/core/services/quick_action_service.dart';
+import 'package:petvita/core/theme/app_theme.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/data/repositories/maintenance_repository.dart';
+import 'package:petvita/data/repositories/pet_repository.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/manager/locale_provider.dart';
+import 'package:petvita/presentation/navigation/default_quick_action_navigation.dart';
+import 'package:petvita/presentation/navigation/main_navigation_controller.dart';
+import 'package:petvita/presentation/navigation/main_shell.dart';
+import 'package:petvita/presentation/screens/vehicle/select_vehicle_screen.dart';
 
 void main() {
   setUp(() {
@@ -50,8 +50,8 @@ void main() {
 
   testWidgets('hot duplicate log intents run one request', (tester) async {
     final platform = _FakeQuickActionPlatform();
-    final vehicleRepository = _FakeVehicleRepository();
-    final blockedRead = Completer<List<Vehicle>>();
+    final vehicleRepository = _FakePetRepository();
+    final blockedRead = Completer<List<Pet>>();
     vehicleRepository.blockedRead = blockedRead;
     final service = _service(
       platform: platform,
@@ -80,7 +80,7 @@ void main() {
   ) async {
     final platform = _FakeQuickActionPlatform();
     final preferences = _FakePreferencesService(defaultVehicleId: 999);
-    final vehicleRepository = _FakeVehicleRepository(
+    final vehicleRepository = _FakePetRepository(
       vehicles: [_vehicle(1), _vehicle(2)],
     );
     final service = _service(
@@ -103,13 +103,13 @@ void main() {
 
 QuickActionService _service({
   required _FakeQuickActionPlatform platform,
-  _FakeVehicleRepository? vehicleRepository,
+  _FakePetRepository? vehicleRepository,
   _FakePreferencesService? preferencesService,
   MainNavigationController? mainNavigation,
 }) {
   final maintenanceRepository = _FakeMaintenanceRepository();
   return QuickActionService(
-    vehicleRepository: vehicleRepository ?? _FakeVehicleRepository(),
+    vehicleRepository: vehicleRepository ?? _FakePetRepository(),
     preferencesService: preferencesService ?? _FakePreferencesService(),
     navigation: DefaultQuickActionNavigation(
       MaintenancePlanUseCases(maintenanceRepository),
@@ -155,8 +155,8 @@ Widget _testApp({MainNavigationController? mainNavigation}) {
   );
 }
 
-Vehicle _vehicle(int id) {
-  return Vehicle(
+Pet _vehicle(int id) {
+  return Pet(
     id: id,
     name: 'Vehicle $id',
     mileage: 1000,
@@ -184,19 +184,19 @@ class _FakeQuickActionPlatform implements QuickActionPlatform {
   }) async {}
 }
 
-class _FakeVehicleRepository extends VehicleRepository {
-  _FakeVehicleRepository({List<Vehicle> vehicles = const []})
-    : vehicles = List<Vehicle>.of(vehicles);
+class _FakePetRepository extends PetRepository {
+  _FakePetRepository({List<Pet> vehicles = const []})
+    : vehicles = List<Pet>.of(vehicles);
 
-  final List<Vehicle> vehicles;
-  Completer<List<Vehicle>>? blockedRead;
+  final List<Pet> vehicles;
+  Completer<List<Pet>>? blockedRead;
   int readCount = 0;
 
   @override
-  Future<List<Vehicle>> getVehicles() async {
+  Future<List<Pet>> getVehicles() async {
     readCount++;
     if (blockedRead case final blocker?) return blocker.future;
-    return List<Vehicle>.of(vehicles);
+    return List<Pet>.of(vehicles);
   }
 }
 

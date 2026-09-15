@@ -1,7 +1,7 @@
-import 'package:carvita/application/ports/clock.dart';
-import 'package:carvita/application/ports/prediction_repository_port.dart';
-import 'package:carvita/core/services/prediction_service.dart';
-import 'package:carvita/data/models/predicted_maintenance.dart';
+import 'package:petvita/application/ports/clock.dart';
+import 'package:petvita/application/ports/prediction_repository_port.dart';
+import 'package:petvita/core/services/prediction_service.dart';
+import 'package:petvita/data/models/predicted_maintenance.dart';
 
 final class LoadUpcomingMaintenance {
   const LoadUpcomingMaintenance(

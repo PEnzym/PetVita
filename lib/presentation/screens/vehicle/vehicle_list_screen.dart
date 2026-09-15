@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:carvita/core/constants/app_colors.dart';
-import 'package:carvita/core/constants/app_routes.dart';
-import 'package:carvita/core/utils/operation_result.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/failures/app_failure_localizer.dart';
-import 'package:carvita/presentation/images/vehicle_image_cache.dart';
-import 'package:carvita/presentation/images/vehicle_thumbnail.dart';
-import 'package:carvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_cubit.dart';
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_state.dart';
-import 'package:carvita/presentation/navigation/app_route_arguments.dart';
-import 'package:carvita/presentation/screens/common_widgets/main_bottom_navigation_bar.dart';
+import 'package:petvita/core/constants/app_colors.dart';
+import 'package:petvita/core/constants/app_routes.dart';
+import 'package:petvita/core/utils/operation_result.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/failures/app_failure_localizer.dart';
+import 'package:petvita/presentation/images/pet_image_cache.dart';
+import 'package:petvita/presentation/images/pet_thumbnail.dart';
+import 'package:petvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
+import 'package:petvita/presentation/manager/vehicle_list/pet_cubit.dart';
+import 'package:petvita/presentation/manager/vehicle_list/pet_state.dart';
+import 'package:petvita/presentation/navigation/app_route_arguments.dart';
+import 'package:petvita/presentation/screens/common_widgets/main_bottom_navigation_bar.dart';
 
 class VehicleListScreen extends StatefulWidget {
   const VehicleListScreen({super.key});
@@ -24,7 +24,7 @@ class VehicleListScreen extends StatefulWidget {
 }
 
 class _VehicleListScreenState extends State<VehicleListScreen> {
-  Future<void> _confirmDelete(BuildContext context, Vehicle vehicle) async {
+  Future<void> _confirmDelete(BuildContext context, Pet vehicle) async {
     final bool? confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -66,11 +66,11 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     );
 
     if (confirmed == true && vehicle.id != null && context.mounted) {
-      final cubit = context.read<VehicleCubit>();
+      final cubit = context.read<PetCubit>();
       final result = await cubit.deleteVehicle(vehicle.id!);
       if (!context.mounted) return;
       if (result is OperationSuccess) {
-        context.read<VehicleImageCache>().invalidate(vehicle.id!);
+        context.read<PetImageCache>().invalidate(vehicle.id!);
         context.read<UpcomingMaintenanceCubit>().loadAllUpcomingMaintenance(
           AppLocalizations.of(context),
         );
@@ -103,9 +103,9 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
         elevation: 1,
         shadowColor: Colors.black.withValues(alpha: 0.7),
       ),
-      body: BlocConsumer<VehicleCubit, VehicleState>(
+      body: BlocConsumer<PetCubit, PetState>(
         listener: (context, state) {
-          if (state is VehicleError) {
+          if (state is PetError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
@@ -119,7 +119,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
                 backgroundColor: AppColors.urgentReminderText,
               ),
             );
-          } else if (state is VehicleLoaded && state.refreshFailure != null) {
+          } else if (state is PetLoaded && state.refreshFailure != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
@@ -133,13 +133,13 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
           }
         },
         builder: (context, state) {
-          if (state is VehicleLoading) {
+          if (state is PetLoading) {
             return Center(
               child: CircularProgressIndicator(
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
             );
-          } else if (state is VehicleLoaded) {
+          } else if (state is PetLoaded) {
             if (state.vehicles.isEmpty) {
               return Center(
                 child: Column(
@@ -180,8 +180,8 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
                       horizontal: 16,
                       vertical: 10,
                     ),
-                    leading: VehicleThumbnail(
-                      vehicle: vehicle,
+                    leading: PetThumbnail(
+                      pet: vehicle,
                       width: 70,
                       height: 70,
                       iconSize: 35,
@@ -197,11 +197,11 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        (vehicle.model != null && vehicle.model!.isNotEmpty)
+                        (vehicle.breed != null && vehicle.breed!.isNotEmpty)
                             ? Text(
                                 AppLocalizations.of(context)!.labeledValue(
-                                  AppLocalizations.of(context)!.vehicleModel,
-                                  vehicle.model!,
+                                  AppLocalizations.of(context)!.petBreed,
+                                  vehicle.breed!,
                                 ),
                                 style: TextStyle(
                                   color: Theme.of(context).colorScheme.onSurface
@@ -210,7 +210,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
                                 ),
                               )
                             : Text(
-                                AppLocalizations.of(context)!.unknownModel,
+                                AppLocalizations.of(context)!.petBreed,
                                 style: TextStyle(
                                   color: Theme.of(context).colorScheme.onSurface
                                       .withValues(alpha: 0.7),
@@ -232,8 +232,8 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
                             Navigator.pushNamed(
                               context,
                               AppRoutes.addVehicleRoute,
-                              arguments: AddEditVehicleRouteArguments(
-                                vehicle: vehicle,
+                              arguments: AddEditPetRouteArguments(
+                                pet: vehicle,
                               ),
                             );
                           },
@@ -261,7 +261,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
                 );
               },
             );
-          } else if (state is VehicleError) {
+          } else if (state is PetError) {
             return Center(
               child: Text(
                 state.failure.toLocalizedMessage(AppLocalizations.of(context)!),
@@ -283,7 +283,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
           Navigator.pushNamed(
             context,
             AppRoutes.addVehicleRoute,
-            arguments: const AddEditVehicleRouteArguments(),
+            arguments: const AddEditPetRouteArguments(),
           );
         },
         backgroundColor: Theme.of(context).colorScheme.primary,

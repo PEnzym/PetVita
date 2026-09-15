@@ -1,10 +1,10 @@
-import 'package:carvita/application/ports/maintenance_repository_port.dart';
-import 'package:carvita/application/ports/prediction_repository_port.dart';
-import 'package:carvita/application/queries/maintenance_data_snapshot.dart';
-import 'package:carvita/data/models/maintenance_plan_item.dart';
-import 'package:carvita/data/models/service_log_entry.dart';
-import 'package:carvita/data/models/service_log_performed_item_link.dart';
-import 'package:carvita/data/sources/local/database_helper.dart';
+import 'package:petvita/application/ports/maintenance_repository_port.dart';
+import 'package:petvita/application/ports/prediction_repository_port.dart';
+import 'package:petvita/application/queries/maintenance_data_snapshot.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
+import 'package:petvita/data/models/service_log_performed_item_link.dart';
+import 'package:petvita/data/sources/local/database_helper.dart';
 
 class MaintenanceRepository
     implements MaintenanceRepositoryPort, PredictionRepositoryPort {

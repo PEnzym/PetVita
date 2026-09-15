@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:carvita/core/theme/app_theme.dart';
-import 'package:carvita/core/utils/preference_selection.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/screens/settings/preference_dialogs.dart';
+import 'package:petvita/core/theme/app_theme.dart';
+import 'package:petvita/core/utils/preference_selection.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/screens/settings/preference_dialogs.dart';
 
 void main() {
   testWidgets('dismissing default vehicle dialog keeps existing selection', (
@@ -135,8 +135,8 @@ Widget _testApp({
   );
 }
 
-Vehicle _vehicle(int id) {
-  return Vehicle(
+Pet _vehicle(int id) {
+  return Pet(
     id: id,
     name: 'Vehicle $id',
     mileage: 1000,

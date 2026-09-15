@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appName": "CarVita",
+  "appName": "PetVita",
   "@appName": {
     "description": "The name of the application"
   },
@@ -728,6 +728,22 @@
   "vehicleNicknameHint": "e.g. My Tesla",
   "@vehicleNicknameHint": {
     "description": "The hint for the vehicle nickname field in the vehicle info screen"
+  },
+  "petName": "Pet name",
+  "@petName": {
+    "description": "The pet name field label"
+  },
+  "petBreed": "Breed",
+  "@petBreed": {
+    "description": "The pet breed field label"
+  },
+  "petBreedHint": "e.g. Golden Retriever",
+  "@petBreedHint": {
+    "description": "The pet breed field hint"
+  },
+  "petBirthDate": "Birth date",
+  "@petBirthDate": {
+    "description": "The pet birth date field label"
   },
   "boughtDate": "Purchase date",
   "@boughtDate": {

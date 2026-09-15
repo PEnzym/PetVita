@@ -5,18 +5,18 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:provider/provider.dart';
 
-import 'package:carvita/application/ports/preferences_ports.dart';
-import 'package:carvita/application/ports/vehicle_repository_port.dart';
-import 'package:carvita/application/use_cases/vehicle_use_cases.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/presentation/images/vehicle_image_cache.dart';
-import 'package:carvita/presentation/images/vehicle_thumbnail.dart';
+import 'package:petvita/application/ports/preferences_ports.dart';
+import 'package:petvita/application/ports/pet_repository_port.dart';
+import 'package:petvita/application/use_cases/pet_use_cases.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/presentation/images/pet_image_cache.dart';
+import 'package:petvita/presentation/images/pet_thumbnail.dart';
 
 void main() {
   test('cache reuses reads and evicts the least recently used image', () async {
     final repository = _ImageRepository();
-    final cache = VehicleImageCache(
-      VehicleUseCases(repository, _DefaultVehiclePreferences()),
+    final cache = PetImageCache(
+      PetUseCases(repository, _DefaultVehiclePreferences()),
       maximumEntries: 2,
     );
 
@@ -33,8 +33,8 @@ void main() {
 
   test('invalidate forces the next image read', () async {
     final repository = _ImageRepository();
-    final cache = VehicleImageCache(
-      VehicleUseCases(repository, _DefaultVehiclePreferences()),
+    final cache = PetImageCache(
+      PetUseCases(repository, _DefaultVehiclePreferences()),
     );
 
     await cache.load(7);
@@ -53,8 +53,8 @@ void main() {
           2: Uint8List.fromList([2, 2]),
         },
       );
-      final cache = VehicleImageCache(
-        VehicleUseCases(repository, _DefaultVehiclePreferences()),
+      final cache = PetImageCache(
+        PetUseCases(repository, _DefaultVehiclePreferences()),
         maximumBytes: 2,
       );
 
@@ -73,8 +73,8 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(
       MaterialApp(
-        home: VehicleThumbnail(
-          vehicle: Vehicle(
+        home: PetThumbnail(
+          pet: Pet(
             id: 1,
             name: 'Vehicle',
             mileage: 100,
@@ -98,20 +98,20 @@ void main() {
     tester,
   ) async {
     final repository = _ImageRepository();
-    final cache = VehicleImageCache(
-      VehicleUseCases(repository, _DefaultVehiclePreferences()),
+    final cache = PetImageCache(
+      PetUseCases(repository, _DefaultVehiclePreferences()),
       maximumEntries: 8,
     );
 
     await tester.pumpWidget(
-      Provider<VehicleImageCache>.value(
+      Provider<PetImageCache>.value(
         value: cache,
         child: MaterialApp(
           home: ListView.builder(
             itemExtent: 72,
             itemCount: 100,
-            itemBuilder: (_, index) => VehicleThumbnail(
-              vehicle: Vehicle(
+            itemBuilder: (_, index) => PetThumbnail(
+              pet: Pet(
                 id: index + 1,
                 name: 'Vehicle $index',
                 mileage: 100,
@@ -138,7 +138,7 @@ void main() {
   });
 }
 
-final class _ImageRepository implements VehicleRepositoryPort {
+final class _ImageRepository implements PetRepositoryPort {
   _ImageRepository({this.bytesById = const {}});
 
   final Map<int, Uint8List> bytesById;
@@ -151,16 +151,16 @@ final class _ImageRepository implements VehicleRepositoryPort {
   }
 
   @override
-  Future<List<Vehicle>> getVehicles() async => const [];
+  Future<List<Pet>> getVehicles() async => const [];
 
   @override
-  Future<Vehicle?> getVehicleById(int id) async => null;
+  Future<Pet?> getVehicleById(int id) async => null;
 
   @override
-  Future<void> addVehicle(Vehicle vehicle) async {}
+  Future<void> addVehicle(Pet vehicle) async {}
 
   @override
-  Future<void> updateVehicle(Vehicle vehicle) async {}
+  Future<void> updateVehicle(Pet vehicle) async {}
 
   @override
   Future<void> deleteVehicle(int id) async {}

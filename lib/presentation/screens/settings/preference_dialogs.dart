@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'package:carvita/core/constants/app_colors.dart';
-import 'package:carvita/core/utils/preference_selection.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/core/constants/app_colors.dart';
+import 'package:petvita/core/utils/preference_selection.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
 
 Future<PreferenceSelection<int>?> showDefaultVehicleSelectionDialog({
   required BuildContext context,
-  required List<Vehicle> vehicles,
+  required List<Pet> vehicles,
   required int? currentVehicleId,
 }) {
   return showDialog<PreferenceSelection<int>>(

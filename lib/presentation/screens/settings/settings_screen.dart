@@ -4,31 +4,31 @@ import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-import 'package:carvita/application/ports/notification_permission_port.dart';
-import 'package:carvita/application/ports/platform_ports.dart';
-import 'package:carvita/application/use_cases/reconcile_notification_permission.dart';
-import 'package:carvita/application/use_cases/vehicle_use_cases.dart';
-import 'package:carvita/core/constants/app_colors.dart';
-import 'package:carvita/core/constants/app_routes.dart';
-import 'package:carvita/core/failures/app_failure.dart';
-import 'package:carvita/core/services/preferences_service.dart';
-import 'package:carvita/core/theme/app_theme.dart';
-import 'package:carvita/core/utils/preference_selection.dart';
-import 'package:carvita/core/widgets/gradient_background.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/main.dart';
-import 'package:carvita/presentation/failures/app_failure_localizer.dart';
-import 'package:carvita/presentation/formatters/preference_localizer.dart';
-import 'package:carvita/presentation/manager/locale_provider.dart';
-import 'package:carvita/presentation/manager/theme_provider.dart';
-import 'package:carvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_cubit.dart';
-import 'package:carvita/presentation/screens/common_widgets/main_bottom_navigation_bar.dart';
-import 'package:carvita/presentation/screens/settings/backup_settings_section.dart';
-import 'package:carvita/presentation/screens/settings/preference_dialogs.dart';
+import 'package:petvita/application/ports/notification_permission_port.dart';
+import 'package:petvita/application/ports/platform_ports.dart';
+import 'package:petvita/application/use_cases/reconcile_notification_permission.dart';
+import 'package:petvita/application/use_cases/pet_use_cases.dart';
+import 'package:petvita/core/constants/app_colors.dart';
+import 'package:petvita/core/constants/app_routes.dart';
+import 'package:petvita/core/failures/app_failure.dart';
+import 'package:petvita/core/services/preferences_service.dart';
+import 'package:petvita/core/theme/app_theme.dart';
+import 'package:petvita/core/utils/preference_selection.dart';
+import 'package:petvita/core/widgets/gradient_background.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/main.dart';
+import 'package:petvita/presentation/failures/app_failure_localizer.dart';
+import 'package:petvita/presentation/formatters/preference_localizer.dart';
+import 'package:petvita/presentation/manager/locale_provider.dart';
+import 'package:petvita/presentation/manager/theme_provider.dart';
+import 'package:petvita/presentation/manager/upcoming_maintenance/upcoming_maintenance_cubit.dart';
+import 'package:petvita/presentation/manager/vehicle_list/pet_cubit.dart';
+import 'package:petvita/presentation/screens/common_widgets/main_bottom_navigation_bar.dart';
+import 'package:petvita/presentation/screens/settings/backup_settings_section.dart';
+import 'package:petvita/presentation/screens/settings/preference_dialogs.dart';
 
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_state.dart'
+import 'package:petvita/presentation/manager/vehicle_list/pet_state.dart'
     as vehicle_list_state_import;
 
 class SettingsScreen extends StatefulWidget {
@@ -41,7 +41,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen>
     with WidgetsBindingObserver {
   late final PreferencesService _preferencesService;
-  late final VehicleUseCases _vehicleUseCases;
+  late final PetUseCases _vehicleUseCases;
   late final AppPackageInfoPort _packageInfoProvider;
   late final ExternalUrlPort _externalUrl;
 
@@ -60,7 +60,7 @@ class _SettingsScreenState extends State<SettingsScreen>
   void initState() {
     super.initState();
     _preferencesService = context.read<PreferencesService>();
-    _vehicleUseCases = context.read<VehicleUseCases>();
+    _vehicleUseCases = context.read<PetUseCases>();
     _notificationService = context.read<NotificationPermissionGateway>();
     _reconcileNotificationPermission = context
         .read<ReconcileNotificationPermission>();
@@ -92,9 +92,9 @@ class _SettingsScreenState extends State<SettingsScreen>
 
     _currentDefaultVehicleId = defaultId;
     if (defaultId != null) {
-      final vehicleState = context.read<VehicleCubit>().state;
-      Vehicle? vehicle;
-      if (vehicleState is vehicle_list_state_import.VehicleLoaded) {
+      final vehicleState = context.read<PetCubit>().state;
+      Pet? vehicle;
+      if (vehicleState is vehicle_list_state_import.PetLoaded) {
         vehicle = vehicleState.vehicles.firstWhereOrNull(
           (v) => v.id == defaultId,
         );
@@ -123,7 +123,7 @@ class _SettingsScreenState extends State<SettingsScreen>
 
   Future<void> _showSelectDefaultVehicleDialog(
     BuildContext context,
-    List<Vehicle> vehicles,
+    List<Pet> vehicles,
   ) async {
     final result = await showDefaultVehicleSelectionDialog(
       context: context,
@@ -614,7 +614,7 @@ class _SettingsScreenState extends State<SettingsScreen>
 
   @override
   Widget build(BuildContext context) {
-    final vehicleState = context.watch<VehicleCubit>().state;
+    final vehicleState = context.watch<PetCubit>().state;
     final localeProvider = context.watch<LocaleProvider>();
     final themeProvider = context.watch<ThemeProvider>();
     final themeExtensions = Theme.of(context).extension<AppThemeExtensions>()!;
@@ -707,7 +707,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                       : _defaultVehicleName,
                   onTap: () {
                     if (vehicleState
-                        is vehicle_list_state_import.VehicleLoaded) {
+                        is vehicle_list_state_import.PetLoaded) {
                       if (vehicleState.vehicles.isNotEmpty) {
                         _showSelectDefaultVehicleDialog(
                           context,
@@ -734,7 +734,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                           ).colorScheme.primary,
                         ),
                       );
-                      context.read<VehicleCubit>().fetchVehicles();
+                      context.read<PetCubit>().fetchVehicles();
                     }
                   },
                 ),

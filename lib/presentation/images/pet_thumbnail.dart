@@ -4,20 +4,20 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/presentation/images/vehicle_image_cache.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/presentation/images/pet_image_cache.dart';
 
-class VehicleThumbnail extends StatelessWidget {
-  const VehicleThumbnail({
+class PetThumbnail extends StatelessWidget {
+  const PetThumbnail({
     super.key,
-    required this.vehicle,
+    required this.pet,
     required this.width,
     required this.height,
     this.borderRadius = const BorderRadius.all(Radius.circular(8)),
     this.iconSize = 32,
   });
 
-  final Vehicle vehicle;
+  final Pet pet;
   final double width;
   final double height;
   final BorderRadius borderRadius;
@@ -25,17 +25,17 @@ class VehicleThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final directImage = vehicle.imageLoaded ? vehicle.image : null;
+    final directImage = pet.imageLoaded ? pet.image : null;
     if (directImage != null && directImage.isNotEmpty) {
       return _image(context, directImage);
     }
-    final vehicleId = vehicle.id;
-    if (vehicle.imageLoaded || vehicleId == null) {
+    final petId = pet.id;
+    if (pet.imageLoaded || petId == null) {
       return _placeholder(context);
     }
 
     return FutureBuilder<Uint8List?>(
-      future: context.read<VehicleImageCache>().load(vehicleId),
+      future: context.read<PetImageCache>().load(petId),
       builder: (context, snapshot) {
         final bytes = snapshot.data;
         if (bytes == null || bytes.isEmpty) {

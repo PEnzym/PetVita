@@ -6,32 +6,32 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import 'package:carvita/application/use_cases/maintenance_plan_use_cases.dart';
-import 'package:carvita/application/use_cases/service_log_use_cases.dart';
-import 'package:carvita/application/use_cases/vehicle_use_cases.dart';
-import 'package:carvita/core/constants/app_colors.dart';
-import 'package:carvita/core/constants/app_routes.dart';
-import 'package:carvita/core/failures/app_failure.dart';
-import 'package:carvita/core/theme/app_theme.dart';
-import 'package:carvita/core/widgets/gradient_background.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/failures/app_failure_localizer.dart';
-import 'package:carvita/presentation/manager/maintenance_plan/maintenance_plan_cubit.dart';
-import 'package:carvita/presentation/manager/service_log/service_log_cubit.dart';
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_cubit.dart';
-import 'package:carvita/presentation/navigation/app_route_arguments.dart';
-import 'package:carvita/presentation/screens/vehicle/tabs/maintenance_plan_tab.dart';
-import 'package:carvita/presentation/screens/vehicle/tabs/overview_tab.dart';
-import 'package:carvita/presentation/screens/vehicle/tabs/service_history_tab.dart';
+import 'package:petvita/application/use_cases/maintenance_plan_use_cases.dart';
+import 'package:petvita/application/use_cases/service_log_use_cases.dart';
+import 'package:petvita/application/use_cases/pet_use_cases.dart';
+import 'package:petvita/core/constants/app_colors.dart';
+import 'package:petvita/core/constants/app_routes.dart';
+import 'package:petvita/core/failures/app_failure.dart';
+import 'package:petvita/core/theme/app_theme.dart';
+import 'package:petvita/core/widgets/gradient_background.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/failures/app_failure_localizer.dart';
+import 'package:petvita/presentation/manager/maintenance_plan/maintenance_plan_cubit.dart';
+import 'package:petvita/presentation/manager/service_log/service_log_cubit.dart';
+import 'package:petvita/presentation/manager/vehicle_list/pet_cubit.dart';
+import 'package:petvita/presentation/navigation/app_route_arguments.dart';
+import 'package:petvita/presentation/screens/vehicle/tabs/maintenance_plan_tab.dart';
+import 'package:petvita/presentation/screens/vehicle/tabs/overview_tab.dart';
+import 'package:petvita/presentation/screens/vehicle/tabs/service_history_tab.dart';
 
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_state.dart'
+import 'package:petvita/presentation/manager/vehicle_list/pet_state.dart'
     as vehicle_list_state_import;
 
 class VehicleDetailsScreen extends StatefulWidget {
   final int vehicleId;
   final VehicleDetailsTab initialTab;
-  final VehicleUseCases? vehicleUseCases;
+  final PetUseCases? vehicleUseCases;
   final MaintenancePlanUseCases? maintenancePlanUseCases;
   final ServiceLogUseCases? serviceLogUseCases;
 
@@ -51,11 +51,11 @@ class VehicleDetailsScreen extends StatefulWidget {
 class _VehicleDetailsScreenState extends State<VehicleDetailsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  Vehicle? _vehicle;
+  Pet? _vehicle;
   bool _isLoading = true;
   AppFailure? _failure;
 
-  late final VehicleUseCases _vehicleUseCases;
+  late final PetUseCases _vehicleUseCases;
   late final MaintenancePlanUseCases _maintenancePlanUseCases;
   late final ServiceLogUseCases _serviceLogUseCases;
 
@@ -63,7 +63,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen>
   void initState() {
     super.initState();
     _vehicleUseCases =
-        widget.vehicleUseCases ?? context.read<VehicleUseCases>();
+        widget.vehicleUseCases ?? context.read<PetUseCases>();
     _maintenancePlanUseCases =
         widget.maintenancePlanUseCases ??
         context.read<MaintenancePlanUseCases>();
@@ -111,15 +111,17 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen>
     super.dispose();
   }
 
-  Widget _buildVehicleHeader(BuildContext context, Vehicle vehicle) {
+  Widget _buildVehicleHeader(BuildContext context, Pet vehicle) {
     final themeExtensions = Theme.of(context).extension<AppThemeExtensions>()!;
-    final purchaseYear = DateFormat.y(
-      Localizations.localeOf(context).toLanguageTag(),
-    ).format(vehicle.boughtDate);
-    final model = vehicle.model;
-    final modelAndYear = model != null && model.isNotEmpty
-        ? AppLocalizations.of(context)!.modelAndYear(model, purchaseYear)
-        : purchaseYear;
+    final breed = vehicle.breed;
+    final birthDate = vehicle.birthDate;
+    final petSummary = breed != null && breed.isNotEmpty
+        ? '$breed${birthDate == null ? '' : ' · ${DateFormat.yMd(Localizations.localeOf(context).toLanguageTag()).format(birthDate)}'}'
+        : birthDate == null
+        ? null
+        : DateFormat.yMd(
+            Localizations.localeOf(context).toLanguageTag(),
+          ).format(birthDate);
     return Container(
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top + 10,
@@ -210,7 +212,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen>
           ),
           const SizedBox(height: 5),
           Text(
-            modelAndYear,
+            petSummary ?? AppLocalizations.of(context)!.petName,
             style: TextStyle(
               color: themeExtensions.textColorOnBackground.withValues(
                 alpha: 0.85,
@@ -398,9 +400,9 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen>
 
     final themeExtensions = Theme.of(context).extension<AppThemeExtensions>()!;
 
-    return BlocListener<VehicleCubit, vehicle_list_state_import.VehicleState>(
+    return BlocListener<PetCubit, vehicle_list_state_import.PetState>(
       listener: (BuildContext context, vehicleListState) {
-        if (vehicleListState is vehicle_list_state_import.VehicleLoaded &&
+        if (vehicleListState is vehicle_list_state_import.PetLoaded &&
             _vehicle != null) {
           final updatedVehicleInList = vehicleListState.vehicles
               .firstWhereOrNull((v) => v.id == _vehicle!.id);

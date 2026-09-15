@@ -4,8 +4,13 @@ final class DatabaseSchema {
   const DatabaseSchema._();
 
   static const int legacyVersion = 1;
-  static const int currentVersion = 2;
-  static const Set<int> restorableVersions = {legacyVersion, currentVersion};
+  static const int previousVersion = 2;
+  static const int currentVersion = 3;
+  static const Set<int> restorableVersions = {
+    legacyVersion,
+    previousVersion,
+    currentVersion,
+  };
 
   static const String legacyBaselineDateDefault = '1970-01-01T00:00:00.000';
 
@@ -14,12 +19,14 @@ final class DatabaseSchema {
   static const String serviceLogLookupIndex = 'idx_service_log_vehicle_date_id';
   static const String performedItemLogIndex = 'idx_performed_item_log_id';
   static const String performedItemPlanIndex = 'idx_performed_item_plan_id';
+  static const String weightEntryPetDateIndex = 'idx_weight_entry_pet_date';
 
   static const Set<String> indexNames = {
     planLookupIndex,
     serviceLogLookupIndex,
     performedItemLogIndex,
     performedItemPlanIndex,
+    weightEntryPetDateIndex,
   };
 
   static Future<void> configure(Database database) async {
@@ -40,9 +47,11 @@ final class DatabaseSchema {
     }
 
     await database.execute('''
-      CREATE TABLE vehicles (
+      CREATE TABLE pets (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
+        breed TEXT,
+        birth_date TEXT,
         mileage REAL NOT NULL,
         mileage_last_updated TEXT NOT NULL,
         bought_date TEXT NOT NULL,
@@ -67,7 +76,7 @@ final class DatabaseSchema {
         isActive INTEGER DEFAULT 1 NOT NULL,
         baselineDate TEXT NOT NULL DEFAULT '$legacyBaselineDateDefault',
         baselineMileage REAL NOT NULL DEFAULT 0,
-        FOREIGN KEY (vehicleId) REFERENCES vehicles (id) ON DELETE CASCADE
+        FOREIGN KEY (vehicleId) REFERENCES pets (id) ON DELETE CASCADE
       )
     ''');
 
@@ -79,7 +88,7 @@ final class DatabaseSchema {
         mileageAtService REAL NOT NULL,
         cost REAL,
         notes TEXT,
-        FOREIGN KEY (vehicleId) REFERENCES vehicles (id) ON DELETE CASCADE
+        FOREIGN KEY (vehicleId) REFERENCES pets (id) ON DELETE CASCADE
       )
     ''');
 
@@ -96,6 +105,7 @@ final class DatabaseSchema {
       )
     ''');
 
+    await _createWeightEntriesTable(database);
     await _createIndexes(database);
   }
 
@@ -116,17 +126,21 @@ final class DatabaseSchema {
     if (oldVersion < 2 && newVersion >= 2) {
       await _upgradeV1ToV2(database);
     }
+    if (oldVersion < 3 && newVersion >= 3) {
+      await _upgradeV2ToV3(database);
+    }
   }
 
   static Future<DatabaseConsistencyReport> audit(
     DatabaseExecutor database,
   ) async {
+    final petTable = await _tableExists(database, 'pets') ? 'pets' : 'vehicles';
     final columns = await _columnNames(database, 'maintenance_plan_items');
     final hasBaselines =
         columns.contains('baselineDate') && columns.contains('baselineMileage');
 
     final vehicleRows = await database.rawQuery(
-      'SELECT mileage, mileage_last_updated, bought_date FROM vehicles',
+      'SELECT mileage, mileage_last_updated, bought_date FROM $petTable',
     );
     final invalidVehicleValues = vehicleRows.where((row) {
       return row['mileage'] is! num ||
@@ -157,14 +171,14 @@ final class DatabaseSchema {
       orphanPlanItems: await _count(database, '''
         SELECT COUNT(*)
         FROM maintenance_plan_items plan
-        LEFT JOIN vehicles vehicle ON vehicle.id = plan.vehicleId
-        WHERE vehicle.id IS NULL
+        LEFT JOIN $petTable pet ON pet.id = plan.vehicleId
+        WHERE pet.id IS NULL
       '''),
       orphanServiceLogs: await _count(database, '''
         SELECT COUNT(*)
         FROM service_log_entries log
-        LEFT JOIN vehicles vehicle ON vehicle.id = log.vehicleId
-        WHERE vehicle.id IS NULL
+        LEFT JOIN $petTable pet ON pet.id = log.vehicleId
+        WHERE pet.id IS NULL
       '''),
       performedItemsMissingLog: await _count(database, '''
         SELECT COUNT(*)
@@ -259,6 +273,7 @@ final class DatabaseSchema {
   }
 
   static Future<void> _repairRelationships(Database database) async {
+    final petTable = await _tableExists(database, 'pets') ? 'pets' : 'vehicles';
     await database.rawDelete('''
       DELETE FROM service_log_performed_items
       WHERE NOT EXISTS (
@@ -300,8 +315,8 @@ final class DatabaseSchema {
               plan.vehicleId <> log.vehicleId
               OR NOT EXISTS (
                 SELECT 1
-                FROM vehicles vehicle
-                WHERE vehicle.id = plan.vehicleId
+                FROM $petTable pet
+                WHERE pet.id = plan.vehicleId
               )
             )
         )
@@ -341,8 +356,8 @@ final class DatabaseSchema {
       DELETE FROM service_log_entries
       WHERE NOT EXISTS (
         SELECT 1
-        FROM vehicles vehicle
-        WHERE vehicle.id = service_log_entries.vehicleId
+        FROM $petTable pet
+        WHERE pet.id = service_log_entries.vehicleId
       )
     ''');
 
@@ -350,8 +365,8 @@ final class DatabaseSchema {
       DELETE FROM maintenance_plan_items
       WHERE NOT EXISTS (
         SELECT 1
-        FROM vehicles vehicle
-        WHERE vehicle.id = maintenance_plan_items.vehicleId
+        FROM $petTable pet
+        WHERE pet.id = maintenance_plan_items.vehicleId
       )
     ''');
   }
@@ -373,6 +388,42 @@ final class DatabaseSchema {
       CREATE INDEX IF NOT EXISTS $performedItemPlanIndex
       ON service_log_performed_items (maintenancePlanItemId, serviceLogId)
     ''');
+    if (await _tableExists(database, 'weight_entries')) {
+      await database.execute('''
+        CREATE INDEX IF NOT EXISTS $weightEntryPetDateIndex
+        ON weight_entries (pet_id, measured_at DESC, id DESC)
+      ''');
+    }
+  }
+
+  static Future<void> _createWeightEntriesTable(Database database) async {
+    await database.execute('''
+      CREATE TABLE IF NOT EXISTS weight_entries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        pet_id INTEGER NOT NULL,
+        measured_at TEXT NOT NULL,
+        weight REAL NOT NULL CHECK (weight > 0),
+        unit TEXT NOT NULL,
+        notes TEXT,
+        FOREIGN KEY (pet_id) REFERENCES pets (id) ON DELETE CASCADE
+      )
+    ''');
+  }
+
+  static Future<void> _upgradeV2ToV3(Database database) async {
+    if (!await _tableExists(database, 'pets')) {
+      await database.execute('ALTER TABLE vehicles RENAME TO pets');
+    }
+    final columns = await _columnNames(database, 'pets');
+    if (!columns.contains('breed')) {
+      await database.execute('ALTER TABLE pets ADD COLUMN breed TEXT');
+    }
+    if (!columns.contains('birth_date')) {
+      await database.execute('ALTER TABLE pets ADD COLUMN birth_date TEXT');
+    }
+    await _createWeightEntriesTable(database);
+    await _createIndexes(database);
+    await _verifyForeignKeys(database);
   }
 
   static Future<void> _verifyForeignKeys(Database database) async {
@@ -387,6 +438,7 @@ final class DatabaseSchema {
   static Future<int> _foreignKeyDefinitionIssues(
     DatabaseExecutor database,
   ) async {
+    final petTable = await _tableExists(database, 'pets') ? 'pets' : 'vehicles';
     var issues = 0;
     final planForeignKeys = await database.rawQuery(
       'PRAGMA foreign_key_list("maintenance_plan_items")',
@@ -394,7 +446,7 @@ final class DatabaseSchema {
     if (!_containsForeignKey(
       planForeignKeys,
       from: 'vehicleId',
-      table: 'vehicles',
+      table: petTable,
       to: 'id',
       onDelete: 'CASCADE',
     )) {
@@ -407,7 +459,7 @@ final class DatabaseSchema {
     if (!_containsForeignKey(
       logForeignKeys,
       from: 'vehicleId',
-      table: 'vehicles',
+      table: petTable,
       to: 'id',
       onDelete: 'CASCADE',
     )) {
@@ -460,6 +512,17 @@ final class DatabaseSchema {
   ) async {
     final rows = await database.rawQuery('PRAGMA table_info("$table")');
     return rows.map((row) => row['name']).whereType<String>().toSet();
+  }
+
+  static Future<bool> _tableExists(
+    DatabaseExecutor database,
+    String table,
+  ) async {
+    final rows = await database.rawQuery(
+      "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
+      [table],
+    );
+    return rows.isNotEmpty;
   }
 
   static Future<int> _count(DatabaseExecutor database, String query) async {

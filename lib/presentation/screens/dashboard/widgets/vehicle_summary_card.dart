@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/presentation/images/vehicle_thumbnail.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/presentation/images/pet_thumbnail.dart';
 
 class VehicleSummaryCard extends StatelessWidget {
-  final Vehicle vehicle;
+  final Pet pet;
   final String nextMaintenanceInfo;
   final VoidCallback onTap;
 
   const VehicleSummaryCard({
     super.key,
-    required this.vehicle,
+    required this.pet,
     required this.nextMaintenanceInfo,
     required this.onTap,
   });
@@ -29,8 +29,8 @@ class VehicleSummaryCard extends StatelessWidget {
           padding: const EdgeInsets.all(18.0),
           child: Row(
             children: [
-              VehicleThumbnail(
-                vehicle: vehicle,
+              PetThumbnail(
+                pet: pet,
                 width: 60,
                 height: 60,
                 borderRadius: BorderRadius.circular(12),
@@ -41,7 +41,7 @@ class VehicleSummaryCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      vehicle.name,
+                      pet.name,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 16,

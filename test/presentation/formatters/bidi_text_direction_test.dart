@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:carvita/presentation/formatters/bidi_text_direction.dart';
+import 'package:petvita/presentation/formatters/bidi_text_direction.dart';
 
 void main() {
   group('BidiTextDirection', () {

@@ -6,21 +6,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:carvita/application/ports/notification_permission_port.dart';
-import 'package:carvita/application/ports/platform_ports.dart';
-import 'package:carvita/application/use_cases/reconcile_notification_permission.dart';
-import 'package:carvita/application/use_cases/vehicle_use_cases.dart';
-import 'package:carvita/core/services/backup_service.dart';
-import 'package:carvita/core/services/preferences_service.dart';
-import 'package:carvita/core/theme/app_theme.dart';
-import 'package:carvita/data/repositories/vehicle_repository.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/manager/locale_provider.dart';
-import 'package:carvita/presentation/manager/theme_provider.dart';
-import 'package:carvita/presentation/manager/vehicle_list/vehicle_cubit.dart';
-import 'package:carvita/presentation/screens/settings/privacy_screen.dart';
-import 'package:carvita/presentation/screens/settings/settings_screen.dart';
-import 'package:carvita/presentation/screens/vehicle/select_vehicle_screen.dart';
+import 'package:petvita/application/ports/notification_permission_port.dart';
+import 'package:petvita/application/ports/platform_ports.dart';
+import 'package:petvita/application/use_cases/reconcile_notification_permission.dart';
+import 'package:petvita/application/use_cases/pet_use_cases.dart';
+import 'package:petvita/core/services/backup_service.dart';
+import 'package:petvita/core/services/preferences_service.dart';
+import 'package:petvita/core/theme/app_theme.dart';
+import 'package:petvita/data/repositories/pet_repository.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/manager/locale_provider.dart';
+import 'package:petvita/presentation/manager/theme_provider.dart';
+import 'package:petvita/presentation/manager/vehicle_list/pet_cubit.dart';
+import 'package:petvita/presentation/screens/settings/privacy_screen.dart';
+import 'package:petvita/presentation/screens/settings/settings_screen.dart';
+import 'package:petvita/presentation/screens/vehicle/select_vehicle_screen.dart';
 
 void main() {
   setUp(() {
@@ -58,12 +58,12 @@ void _expectLightStatusBar(WidgetTester tester) {
 Widget _settingsApp() {
   final preferences = PreferencesService();
   final notifications = _Notifications();
-  final vehicleUseCases = VehicleUseCases(VehicleRepository(), preferences);
+  final vehicleUseCases = PetUseCases(PetRepository(), preferences);
 
   return MultiProvider(
     providers: [
       Provider<PreferencesService>.value(value: preferences),
-      Provider<VehicleUseCases>.value(value: vehicleUseCases),
+      Provider<PetUseCases>.value(value: vehicleUseCases),
       Provider<NotificationPermissionGateway>.value(value: notifications),
       Provider<ReconcileNotificationPermission>.value(
         value: ReconcileNotificationPermission(preferences, notifications),
@@ -80,7 +80,7 @@ Widget _settingsApp() {
       ChangeNotifierProvider<ThemeProvider>(
         create: (_) => ThemeProvider(preferences),
       ),
-      BlocProvider<VehicleCubit>(create: (_) => VehicleCubit(vehicleUseCases)),
+      BlocProvider<PetCubit>(create: (_) => PetCubit(vehicleUseCases)),
     ],
     child: _testApp(child: const SettingsScreen()),
   );

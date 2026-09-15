@@ -6,9 +6,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:provider/provider.dart';
 
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/navigation/main_navigation_controller.dart';
-import 'package:carvita/presentation/screens/common_widgets/main_bottom_navigation_bar.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/navigation/main_navigation_controller.dart';
+import 'package:petvita/presentation/screens/common_widgets/main_bottom_navigation_bar.dart';
 
 void main() {
   testWidgets('main navigation visual regression', (tester) async {

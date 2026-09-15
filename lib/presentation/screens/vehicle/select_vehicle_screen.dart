@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:carvita/application/use_cases/maintenance_plan_use_cases.dart';
-import 'package:carvita/application/use_cases/service_log_use_cases.dart';
-import 'package:carvita/core/constants/app_colors.dart';
-import 'package:carvita/core/theme/app_theme.dart';
-import 'package:carvita/core/widgets/gradient_background.dart';
-import 'package:carvita/data/models/vehicle.dart';
-import 'package:carvita/i18n/generated/app_localizations.dart';
-import 'package:carvita/presentation/manager/maintenance_plan/maintenance_plan_cubit.dart';
-import 'package:carvita/presentation/manager/service_log/service_log_cubit.dart';
-import 'package:carvita/presentation/images/vehicle_thumbnail.dart';
-import 'package:carvita/presentation/screens/maintenance/log_maintenance_screen.dart';
+import 'package:petvita/application/use_cases/maintenance_plan_use_cases.dart';
+import 'package:petvita/application/use_cases/service_log_use_cases.dart';
+import 'package:petvita/core/constants/app_colors.dart';
+import 'package:petvita/core/theme/app_theme.dart';
+import 'package:petvita/core/widgets/gradient_background.dart';
+import 'package:petvita/data/models/pet.dart';
+import 'package:petvita/i18n/generated/app_localizations.dart';
+import 'package:petvita/presentation/manager/maintenance_plan/maintenance_plan_cubit.dart';
+import 'package:petvita/presentation/manager/service_log/service_log_cubit.dart';
+import 'package:petvita/presentation/images/pet_thumbnail.dart';
+import 'package:petvita/presentation/screens/maintenance/log_maintenance_screen.dart';
 
 class SelectVehicleScreen extends StatelessWidget {
-  final List<Vehicle> vehicles;
+  final List<Pet> vehicles;
 
   const SelectVehicleScreen({super.key, required this.vehicles});
 
@@ -80,8 +80,8 @@ class SelectVehicleScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: ListTile(
-                  leading: VehicleThumbnail(
-                    vehicle: vehicle,
+                  leading: PetThumbnail(
+                    pet: vehicle,
                     width: 50,
                     height: 50,
                   ),
@@ -93,7 +93,7 @@ class SelectVehicleScreen extends StatelessWidget {
                     ),
                   ),
                   subtitle: Text(
-                    vehicle.model ?? AppLocalizations.of(context)!.unknownModel,
+                    vehicle.breed ?? AppLocalizations.of(context)!.petBreed,
                     style: TextStyle(
                       color: Theme.of(
                         context,

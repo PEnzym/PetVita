@@ -11,7 +11,7 @@ void main() {
     root = Directory.systemTemp.createTempSync('carvita_release_validation_');
     File('${root.path}/pubspec.yaml')
       ..createSync(recursive: true)
-      ..writeAsStringSync('name: carvita\nversion: 1.2.3+9\n');
+      ..writeAsStringSync('name: petvita\nversion: 1.2.3+9\n');
     _writeChangelog(root, 'en-US', 9, 'English changes');
     _writeChangelog(root, 'zh-CN', 9, '中文更新');
   });

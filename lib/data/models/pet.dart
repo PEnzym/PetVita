@@ -2,9 +2,11 @@ import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
 
-class Vehicle extends Equatable {
+class Pet extends Equatable {
   final int? id;
   final String name;
+  final String? breed;
+  final DateTime? birthDate;
   final double mileage;
   final DateTime mileageLastUpdated;
   final DateTime boughtDate;
@@ -15,9 +17,11 @@ class Vehicle extends Equatable {
   final String? vin;
   final String? engineNumber;
 
-  const Vehicle({
+  const Pet({
     this.id,
     required this.name,
+    this.breed,
+    this.birthDate,
     required this.mileage,
     required this.mileageLastUpdated,
     required this.boughtDate,
@@ -29,10 +33,15 @@ class Vehicle extends Equatable {
     this.engineNumber,
   });
 
-  factory Vehicle.fromMap(Map<String, dynamic> map) {
-    return Vehicle(
+  factory Pet.fromMap(Map<String, dynamic> map) {
+    return Pet(
       id: map['id'] as int?,
       name: map['name'] as String,
+      breed: map['breed'] as String?,
+      birthDate: switch (map['birth_date']) {
+        final String value => DateTime.tryParse(value),
+        _ => null,
+      },
       mileage: (map['mileage'] as num).toDouble(),
       mileageLastUpdated: DateTime.parse(map['mileage_last_updated'] as String),
       boughtDate: DateTime.parse(map['bought_date'] as String),
@@ -49,6 +58,8 @@ class Vehicle extends Equatable {
     return {
       'id': id,
       'name': name,
+      'breed': breed,
+      'birth_date': birthDate?.toIso8601String(),
       'mileage': mileage,
       'mileage_last_updated': mileageLastUpdated.toIso8601String(),
       'bought_date': boughtDate.toIso8601String(),
@@ -60,9 +71,11 @@ class Vehicle extends Equatable {
     };
   }
 
-  Vehicle copyWith({
+  Pet copyWith({
     int? id,
     String? name,
+    String? breed,
+    DateTime? birthDate,
     double? mileage,
     DateTime? mileageLastUpdated,
     DateTime? boughtDate,
@@ -74,9 +87,11 @@ class Vehicle extends Equatable {
     bool clearImage = false, // Special flag to nullify image
     bool? imageLoaded,
   }) {
-    return Vehicle(
+    return Pet(
       id: id ?? this.id,
       name: name ?? this.name,
+      breed: breed ?? this.breed,
+      birthDate: birthDate ?? this.birthDate,
       mileage: mileage ?? this.mileage,
       mileageLastUpdated: mileageLastUpdated ?? this.mileageLastUpdated,
       boughtDate: boughtDate ?? this.boughtDate,
@@ -89,9 +104,11 @@ class Vehicle extends Equatable {
     );
   }
 
-  bool isIdentical(Vehicle other) {
+  bool isIdentical(Pet other) {
     return id == other.id &&
         name == other.name &&
+        breed == other.breed &&
+        birthDate == other.birthDate &&
         mileage == other.mileage &&
         mileageLastUpdated == other.mileageLastUpdated &&
         boughtDate == other.boughtDate &&
@@ -107,6 +124,8 @@ class Vehicle extends Equatable {
   List<Object?> get props => [
     id,
     name,
+    breed,
+    birthDate,
     mileage,
     mileageLastUpdated,
     boughtDate,
@@ -120,6 +139,6 @@ class Vehicle extends Equatable {
 
   @override
   String toString() {
-    return 'Vehicle{id: $id, name: $name}';
+    return 'Pet{id: $id, name: $name}';
   }
 }

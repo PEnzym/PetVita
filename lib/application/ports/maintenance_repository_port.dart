@@ -1,6 +1,6 @@
-import 'package:carvita/data/models/maintenance_plan_item.dart';
-import 'package:carvita/data/models/service_log_entry.dart';
-import 'package:carvita/data/models/service_log_performed_item_link.dart';
+import 'package:petvita/data/models/maintenance_plan_item.dart';
+import 'package:petvita/data/models/service_log_entry.dart';
+import 'package:petvita/data/models/service_log_performed_item_link.dart';
 
 abstract interface class MaintenanceRepositoryPort {
   Future<List<MaintenancePlanItem>> getPlanItems(int vehicleId);
