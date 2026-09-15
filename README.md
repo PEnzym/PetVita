@@ -16,7 +16,7 @@
 </p>
 
 <h1 align="center">PetVita</h1>
-<h3 align="center">Personal assistant for managing and predicting your vehicle's maintenance needs.</h3>
+<h3 align="center">Interaktywna książeczka zdrowia zwierząt zapewnia szybki przegląd Twoich zwierząt i najpilniejszych nadchodzących usług.</h3>
 
 ![](./.design/assets/feature_graphic/output/en/gh-header_image.jpg)
 
