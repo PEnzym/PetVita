@@ -9,12 +9,6 @@
 
 ![](./.design/assets/feature_graphic/output/en/gh-header_image.jpg)
 
-<p align="center">
-  <a href="./README.md">English</a>
-  &nbsp;|&nbsp;
-  <a href="./.design/i18n/README_zh.md">中文</a>
-</p>
-
 ## Co robi PetVita?
 
 ✅ Interaktywna książeczka zdrowia zwierząt zapewnia szybki przegląd Twoich zwierząt i najpilniejszych nadchodzących czynności.
